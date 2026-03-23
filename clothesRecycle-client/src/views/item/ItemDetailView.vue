@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { addFavorite, getFavoriteList, removeFavorite } from '@/api/favorite'
@@ -20,6 +20,14 @@ const statusTextMap = {
   PENDING_AUDIT: '待审核',
   REJECTED: '已拒绝',
 }
+
+const gallery = computed(() => {
+  if (!detail.value) return []
+  if (Array.isArray(detail.value.imageUrls) && detail.value.imageUrls.length > 0) {
+    return detail.value.imageUrls
+  }
+  return detail.value.coverUrl ? [detail.value.coverUrl] : []
+})
 
 const isClaimable = () => detail.value?.status === 'ON_SHELF'
 
@@ -98,9 +106,12 @@ onMounted(async () => {
       <span style="width: 54px"></span>
     </div>
 
-    <div class="detail-hero item-thumb">
-      <img v-if="detail.coverUrl" :src="detail.coverUrl" alt="cover" class="item-thumb-img" />
-      <span v-else>封面图</span>
+    <div class="detail-hero" v-if="gallery.length > 0">
+      <el-carousel height="150px" indicator-position="outside">
+        <el-carousel-item v-for="url in gallery" :key="url">
+          <img :src="url" alt="物品图片" class="item-thumb-img" />
+        </el-carousel-item>
+      </el-carousel>
     </div>
 
     <div class="section">

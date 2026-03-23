@@ -17,11 +17,35 @@ request.interceptors.response.use(
   (response) => {
     const payload = response.data
     if (payload?.code && payload.code !== 200) {
+      // 后端返回业务未登录时，统一清理本地登录态并回跳登录页。
+      if (payload.code === 401) {
+        localStorage.removeItem('client_token')
+        localStorage.removeItem('client_profile')
+
+        const currentPath = `${window.location.pathname}${window.location.search}`
+        const loginUrl = `/login?redirect=${encodeURIComponent(currentPath)}`
+        if (!window.location.pathname.startsWith('/login')) {
+          window.location.assign(loginUrl)
+        }
+      }
       return Promise.reject(new Error(payload.msg || '请求失败'))
     }
     return payload?.data ?? payload
   },
-  (error) => Promise.reject(error),
+  (error) => {
+    // 网络层 401（例如 Sa-Token 鉴权失败）也走同一套跳转逻辑。
+    if (error?.response?.status === 401) {
+      localStorage.removeItem('client_token')
+      localStorage.removeItem('client_profile')
+
+      const currentPath = `${window.location.pathname}${window.location.search}`
+      const loginUrl = `/login?redirect=${encodeURIComponent(currentPath)}`
+      if (!window.location.pathname.startsWith('/login')) {
+        window.location.assign(loginUrl)
+      }
+    }
+    return Promise.reject(error)
+  },
 )
 
 export default request

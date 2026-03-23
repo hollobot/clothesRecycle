@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
+// C 端采用统一壳布局：页面主体 + 底部 TabBar，保证移动端体验一致。
 const routes = [
   {
     path: '/',
@@ -89,6 +90,7 @@ const router = createRouter({
   },
 })
 
+// 路由守卫：处理鉴权和登录回跳。
 router.beforeEach((to) => {
   const store = useUserStore()
 

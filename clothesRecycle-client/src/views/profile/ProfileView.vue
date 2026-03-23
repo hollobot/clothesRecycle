@@ -9,7 +9,7 @@ const userStore = useUserStore()
 const notifyStore = useNotifyStore()
 
 const menuList = [
-  { title: '我的订单', path: '/orders', color: 'var(--amber-pale)' },
+  { title: '我的订单', path: '/orders', color: 'var(--green-pale)' },
   { title: '我的收藏', path: '/favorites', color: 'var(--blue-pale)' },
   { title: '积分中心', path: '/points', color: 'var(--green-pale)' },
   { title: '礼品商城', path: '/points/mall', color: 'var(--amber-pale)' },
@@ -18,6 +18,11 @@ const menuList = [
 ]
 
 const avatarText = computed(() => String(userStore.profile?.name || '用').slice(0, 1))
+const profileSubText = computed(() => {
+  // 登录接口返回可能不含 phone 字段，避免误显示“请先登录”。
+  if (!userStore.isLogin) return '请先登录'
+  return userStore.profile?.phone || userStore.profile?.studentId || '已登录'
+})
 
 onMounted(() => {
   if (userStore.isLogin) {
@@ -37,7 +42,7 @@ const onClickLogout = () => {
       <div class="avatar-lg">{{ avatarText }}</div>
       <div class="profile-info">
         <div class="pname">{{ userStore.profile?.name || '未登录用户' }}</div>
-        <div class="psub">{{ userStore.profile?.phone || '请先登录' }}</div>
+        <div class="psub">{{ profileSubText }}</div>
       </div>
       <button class="ghost-btn ghost-light" @click="$router.push('/messages')">
         消息 <span v-if="notifyStore.unreadCount > 0">({{ notifyStore.unreadCount }})</span>

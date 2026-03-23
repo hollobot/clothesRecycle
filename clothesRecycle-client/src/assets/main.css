@@ -43,14 +43,70 @@
   justify-content: space-between;
 }
 
+.topbar-stack {
+  align-items: stretch;
+  flex-direction: column;
+}
+
 .topbar h1 {
   font-size: 15px;
   font-weight: 700;
   color: var(--gray-800);
 }
 
+.topbar-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.topbar-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .compact-select {
   width: 136px;
+}
+
+.plaza-campus-select {
+  width: 140px;
+}
+
+.plaza-search-bar {
+  margin: 10px 0 2px;
+  padding: 6px 8px 6px 12px;
+}
+
+.plaza-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--gray-600);
+  font-size: 11px;
+  outline: none;
+}
+
+.plaza-search-input::placeholder {
+  color: var(--gray-400);
+}
+
+.plaza-search-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 4px 10px;
+  font-size: 10px;
+  background: var(--green);
+  color: var(--white);
+  cursor: pointer;
+}
+
+.plaza-search-btn.ghost {
+  background: var(--white);
+  color: var(--gray-600);
+  border: 1px solid var(--gray-200);
 }
 
 .section {
@@ -159,7 +215,7 @@
 .chips-wrap {
   display: flex;
   gap: 6px;
-  padding: 0 14px 8px;
+  padding: 2px 14px 8px;
   overflow-x: auto;
 }
 
@@ -195,13 +251,33 @@
 }
 
 .item-thumb {
-  height: 84px;
+  height: 72px;
   background: var(--green-pale);
   color: var(--green);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
+}
+
+.item-thumb.t-green {
+  background: var(--green-pale);
+  color: var(--green);
+}
+
+.item-thumb.t-amber {
+  background: var(--amber-pale);
+  color: var(--amber);
+}
+
+.item-thumb.t-blue {
+  background: var(--blue-pale);
+  color: var(--blue);
+}
+
+.item-thumb.t-gray {
+  background: var(--gray-100);
+  color: var(--gray-400);
 }
 
 .item-thumb-img {
@@ -332,6 +408,32 @@
 
 .upload-text {
   font-size: 10px;
+  color: var(--gray-400);
+  margin-bottom: 8px;
+}
+
+.publish-upload {
+  margin-bottom: 8px;
+}
+
+.publish-upload .el-upload--picture-card {
+  width: 72px;
+  height: 72px;
+  border: 1.5px dashed var(--gray-300);
+  border-radius: var(--radius-sm);
+  background: var(--gray-50);
+}
+
+.publish-upload .el-upload-list--picture-card .el-upload-list__item {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gray-200);
+}
+
+.upload-picker-plus {
+  font-size: 22px;
+  line-height: 1;
   color: var(--gray-400);
 }
 
@@ -543,6 +645,7 @@
   margin: 12px;
   background: var(--white);
   border: 1px solid var(--gray-100);
+  border-left: 3px solid var(--green-mid);
   border-radius: var(--radius-md);
   padding: 12px;
 }
@@ -613,16 +716,25 @@
   padding: 10px 0;
 }
 
-.gift-cover {
+.gift-cover,
+.gift-cover-img {
   width: 46px;
   height: 46px;
   border-radius: var(--radius-sm);
+}
+
+.gift-cover {
   background: var(--green-pale);
   color: var(--green);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
+}
+
+.gift-cover-img {
+  object-fit: cover;
+  border: 1px solid var(--gray-200);
 }
 
 .gift-main {
@@ -642,6 +754,18 @@
   font-size: 10px;
 }
 
+/* 签到热力图区域：按原型保留月份刻度 + 图例风格。 */
+.hm-months {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.hm-month {
+  font-size: 8px;
+  color: var(--gray-400);
+}
+
 .heatmap-grid {
   display: grid;
   grid-template-columns: repeat(26, 1fr);
@@ -657,6 +781,148 @@
 
 .hm-cell.s2 {
   background: #52b788;
+}
+
+.hm-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.hm-legend span {
+  font-size: 8px;
+  color: var(--gray-400);
+}
+
+.hm-l {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.month-grid-wrap {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.month-card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  background: var(--gray-50);
+}
+
+.month-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.month-card-head strong {
+  font-size: 12px;
+  color: var(--gray-800);
+}
+
+.month-card-head small {
+  font-size: 10px;
+  color: var(--gray-400);
+}
+
+.weekday-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+.weekday-item {
+  text-align: center;
+  font-size: 9px;
+  color: var(--gray-400);
+}
+
+.month-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.month-day-cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--gray-600);
+  background: var(--gray-200);
+}
+
+.month-day-cell.signed {
+  background: #52b788;
+  color: var(--white);
+}
+
+.month-day-cell.empty {
+  background: transparent;
+}
+
+.point-hero {
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+  padding: 14px;
+  color: var(--white);
+}
+
+.point-hero-title {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.point-hero-value {
+  margin-top: 4px;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.point-hero-sub {
+  margin-top: 6px;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.sign-hero-card {
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+  padding: 12px 14px;
+  text-align: center;
+}
+
+.sh-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.sh-sub {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.82);
+  margin-top: 2px;
+}
+
+.sh-btn {
+  margin-top: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--white);
+  border-radius: 16px;
+  font-size: 10px;
+  padding: 4px 14px;
 }
 
 .my-rank-banner {
@@ -762,8 +1028,41 @@
   background: #e24b4a;
 }
 
+/* Element Plus 组件风格微调：降低默认线框感，贴近原型圆角与留白。 */
+.el-input__wrapper,
+.el-textarea__inner,
+.el-select__wrapper {
+  box-shadow: none;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: var(--gray-50);
+}
+
+.el-segmented {
+  --el-segmented-item-selected-bg-color: var(--green-pale);
+  --el-segmented-item-selected-color: var(--green);
+  background: var(--gray-100);
+}
+
+/* Element Plus 按钮统一圆角和层次，避免默认主题和原型风格冲突。 */
+.el-button {
+  border-radius: 8px;
+}
+
+.el-button--primary.is-plain {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-pale);
+}
+
 @media (max-width: 430px) {
   #app {
     box-shadow: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .month-grid-wrap {
+    grid-template-columns: 1fr;
   }
 }
