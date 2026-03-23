@@ -20,8 +20,21 @@ npm run build
 `.env.development`
 
 ```env
+# 本地开发后端地址
 VITE_API_BASE_URL=http://localhost:8080
 ```
+
+`.env.production`
+
+```env
+# 生产环境必须配置真实后端地址
+VITE_API_BASE_URL=https://api.your-domain.com
+```
+
+说明：
+
+- 开发环境未配置 `VITE_API_BASE_URL` 时，会回退 `http://localhost:8080`。
+- 生产环境未配置 `VITE_API_BASE_URL` 时，前端会直接抛出配置错误，避免请求误打到 `localhost`。
 
 ## UI 说明
 

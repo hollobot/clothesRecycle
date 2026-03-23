@@ -22,6 +22,31 @@
   --radius-lg: 16px;
   --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.07);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+
+  /* Element Plus 主题变量：与客户端保持统一绿色主色。 */
+  --el-color-primary: #2e7d52;
+  --el-color-primary-light-3: #64a984;
+  --el-color-primary-light-5: #8ac5a6;
+  --el-color-primary-light-7: #b8dfc8;
+  --el-color-primary-light-8: #d2ebdc;
+  --el-color-primary-light-9: #e8f5ee;
+  --el-color-primary-dark-2: #1f5e3d;
+  /* 状态色与项目语义色对齐，覆盖 Element Plus 默认蓝紫风格。 */
+  --el-color-success: #2e7d52;
+  --el-color-success-light-3: #64a984;
+  --el-color-success-light-5: #8ac5a6;
+  --el-color-success-light-8: #d2ebdc;
+  --el-color-warning: #d4870a;
+  --el-color-warning-light-3: #e0a44a;
+  --el-color-warning-light-5: #e8be7d;
+  --el-color-danger: #c0392b;
+  --el-color-danger-light-3: #d56a60;
+  --el-color-danger-light-5: #df9089;
+  --el-color-info: #5f6b7a;
+  --el-border-radius-base: 8px;
+  --el-font-size-base: 13px;
+  --el-bg-color: #fff;
+  --el-fill-color-light: #f4f4f4;
 }
 
 * {

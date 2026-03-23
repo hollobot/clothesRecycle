@@ -1,14 +1,19 @@
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { getUserOverview } from '@/api/profile'
 import { useNotifyStore } from '@/stores/notify'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const userStore = useUserStore()
 const notifyStore = useNotifyStore()
+const overview = ref({ donateCount: 0, claimCount: 0, pointBalance: 0 })
 
 const menuList = [
+  { title: '编辑资料', path: '/profile/edit', color: 'var(--green-pale)' },
+  { title: '我的发布', path: '/my-items', color: 'var(--amber-pale)' },
   { title: '我的订单', path: '/orders', color: 'var(--green-pale)' },
   { title: '我的收藏', path: '/favorites', color: 'var(--blue-pale)' },
   { title: '积分中心', path: '/points', color: 'var(--green-pale)' },
@@ -26,9 +31,23 @@ const profileSubText = computed(() => {
 
 onMounted(() => {
   if (userStore.isLogin) {
-    notifyStore.loadUnreadCount()
+    Promise.all([notifyStore.loadUnreadCount(), loadOverview()]).catch((error) => {
+      ElMessage.error(error?.message || '个人中心数据加载失败')
+    })
   }
 })
+
+/**
+ * 拉取个人中心统计数据并同步积分显示。
+ */
+const loadOverview = async () => {
+  const data = await getUserOverview()
+  overview.value = {
+    donateCount: Number(data?.donateCount || 0),
+    claimCount: Number(data?.claimCount || 0),
+    pointBalance: Number(data?.pointBalance || 0),
+  }
+}
 
 const onClickLogout = () => {
   userStore.logout()
@@ -39,7 +58,9 @@ const onClickLogout = () => {
 <template>
   <div class="page">
     <div class="profile-hero">
-      <div class="avatar-lg">{{ avatarText }}</div>
+      <el-avatar class="avatar-lg" :size="58" :src="userStore.profile?.avatarUrl">
+        {{ avatarText }}
+      </el-avatar>
       <div class="profile-info">
         <div class="pname">{{ userStore.profile?.name || '未登录用户' }}</div>
         <div class="psub">{{ profileSubText }}</div>
@@ -51,15 +72,15 @@ const onClickLogout = () => {
 
     <div class="stat-strip">
       <div class="stat-cell">
-        <div class="stat-num">-</div>
+        <div class="stat-num">{{ overview.donateCount }}</div>
         <div class="stat-lbl">捐赠件</div>
       </div>
       <div class="stat-cell">
-        <div class="stat-num">-</div>
+        <div class="stat-num">{{ overview.claimCount }}</div>
         <div class="stat-lbl">领取件</div>
       </div>
       <div class="stat-cell">
-        <div class="stat-num">{{ userStore.profile?.pointBalance || 0 }}</div>
+        <div class="stat-num">{{ overview.pointBalance }}</div>
         <div class="stat-lbl">积分</div>
       </div>
     </div>

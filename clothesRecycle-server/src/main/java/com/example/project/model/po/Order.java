@@ -9,7 +9,10 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("order")
+/**
+ * order 是 MySQL 保留关键字，表名需要加反引号避免 SQL 语法错误。
+ */
+@TableName("`order`")
 public class Order extends BaseEntity {
 
     private Long itemId;

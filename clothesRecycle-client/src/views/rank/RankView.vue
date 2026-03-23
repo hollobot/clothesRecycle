@@ -3,19 +3,17 @@ import { computed, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getCampusList } from '@/api/campus'
 import { getMyRank, getRankList } from '@/api/rank'
-import { useUserStore } from '@/stores/user'
-
-const userStore = useUserStore()
 
 const activeTab = ref('points')
 const rank = ref({ list: [], myRank: null })
 const myRankData = ref(null)
 const campusId = ref(null)
 
-const safeCampusId = computed(() => Number(campusId.value || userStore.profile?.campusId || 1))
+// 排行榜按全局展示，不再限制校区条件。
+const safeCampusId = computed(() => (campusId.value ? Number(campusId.value) : undefined))
 
 const load = async () => {
-  rank.value = await getRankList(activeTab.value, safeCampusId.value, 50)
+  rank.value = await getRankList(activeTab.value, safeCampusId.value, 10)
 }
 
 // /api/user/rank/mine 已接入；若后端未返回对应字段，前端按占位文案降级展示。
@@ -42,29 +40,24 @@ const barWidth = (score) => {
 
 const rankLabel = (row) => {
   if (activeTab.value === 'campus') {
-    return row.campusName
+    return row.campusName || `校区#${row.campusId || '-'}`
   }
-  return row.nickname
+  return row.nickname || `用户#${row.userId || '-'}`
 }
 
 const myRankText = () => {
   if (activeTab.value === 'campus') return '校区榜不显示个人名次'
 
   const source = myRankData.value?.[activeTab.value] || rank.value.myRank
-  if (!source || !source.rank) return '暂未上榜'
+  if (!source || !source.rank) return '第 1 名 · 0 分'
 
   return `第 ${source.rank} 名 · ${source.score} 分`
 }
 
 onMounted(async () => {
   try {
-    const campusList = await getCampusList().catch(() => [])
-
-    if (Number(userStore.profile?.campusId) > 0) {
-      campusId.value = Number(userStore.profile.campusId)
-    } else if (campusList.length > 0) {
-      campusId.value = Number(campusList[0].id)
-    }
+    // 保留校区接口调用兼容旧逻辑，但默认不附带校区筛选。
+    await getCampusList().catch(() => [])
 
     await Promise.all([load(), loadMyRank()])
   } catch (error) {

@@ -1,7 +1,36 @@
 import axios from 'axios'
 
+/**
+ * 开发环境后端默认地址。
+ */
+const DEV_DEFAULT_API_BASE_URL = 'http://localhost:8080'
+
+/**
+ * 规范化 API 地址，去掉尾部斜杠，避免出现 //api 路径。
+ */
+const normalizeBaseUrl = (url) => String(url || '').trim().replace(/\/+$/, '')
+
+const envBaseUrl = normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL)
+
+/**
+ * 企业级环境策略：
+ * - 开发环境允许回退 localhost
+ * - 生产环境必须显式配置 VITE_API_BASE_URL
+ */
+const resolveApiBaseUrl = () => {
+  if (import.meta.env.PROD) {
+    if (!envBaseUrl) {
+      throw new Error(
+        '生产环境缺少 VITE_API_BASE_URL，请在 clothesRecycle-client/.env.production 配置真实后端地址',
+      )
+    }
+    return envBaseUrl
+  }
+  return envBaseUrl || DEV_DEFAULT_API_BASE_URL
+}
+
 const request = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
+  baseURL: resolveApiBaseUrl(),
   timeout: 10000,
 })
 

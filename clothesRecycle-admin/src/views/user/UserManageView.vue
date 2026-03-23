@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getCampusList } from '@/api/campus'
+import { getCampusOptions } from '@/api/campus'
 import {
   changeAdminUserStatus,
   createAdminUser,
@@ -57,7 +57,8 @@ const statusText = (status) => (Number(status) === 1 ? '正常' : '禁用')
 
 const loadCampuses = async () => {
   try {
-    const res = await getCampusList()
+    // 用户管理页需要兼容校区管理员，使用公开校区列表接口避免 403。
+    const res = await getCampusOptions()
     campuses.value = Array.isArray(res) ? res : []
   } catch {
     campuses.value = []

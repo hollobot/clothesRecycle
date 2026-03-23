@@ -602,6 +602,10 @@
   padding: 10px 0;
 }
 
+.message-row.unread {
+  background: linear-gradient(90deg, #edf8f1 0%, #ffffff 30%);
+}
+
 .notif-icon {
   width: 30px;
   height: 30px;
@@ -619,6 +623,33 @@
 
 .message-main {
   flex: 1;
+}
+
+.message-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.message-action-btn {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+.message-arrow {
+  color: var(--gray-300);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.message-mask-btn {
+  border: none;
+  background: transparent;
+  color: var(--green);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 4px;
 }
 
 .message-title-row {

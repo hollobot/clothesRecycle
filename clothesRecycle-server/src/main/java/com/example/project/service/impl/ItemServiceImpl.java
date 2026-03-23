@@ -138,9 +138,48 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> listPublicItems(Long campusId) {
+    public List<Item> listMyItems(Long userId) {
+        LambdaQueryWrapper<Item> query = new LambdaQueryWrapper<Item>()
+                .eq(Item::getUserId, userId)
+                .orderByDesc(Item::getCreateTime);
+        return itemMapper.selectList(query);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void cancelMyItem(Long userId, Long itemId, String reason) {
+        Item item = itemMapper.selectById(itemId);
+        if (item == null) {
+            throw new BusinessException("物品不存在");
+        }
+        if (!userId.equals(item.getUserId())) {
+            throw new BusinessException("无权限操作该物品");
+        }
+        if ("TRADING".equals(item.getStatus()) || "DONE".equals(item.getStatus())) {
+            throw new BusinessException("当前状态不可取消发布");
+        }
+        if ("FORCE_OFF_SHELF".equals(item.getStatus())) {
+            throw new BusinessException("该物品已被管理员下架");
+        }
+
+        // 用户主动取消发布统一落 OFF_SHELF，便于客户端展示状态轨迹。
+        item.setStatus("OFF_SHELF");
+        item.setAuditReason(reason == null || reason.isBlank() ? "用户主动取消发布" : reason);
+        itemMapper.updateById(item);
+    }
+
+    @Override
+    public List<Item> listPublicItems(Long campusId, String keyword, String category) {
+        String trimmedKeyword = keyword == null ? null : keyword.trim();
+        String trimmedCategory = category == null ? null : category.trim();
+
         LambdaQueryWrapper<Item> query = new LambdaQueryWrapper<Item>()
                 .eq(campusId != null, Item::getCampusId, campusId)
+                .and(trimmedKeyword != null && !trimmedKeyword.isBlank(),
+                        wrapper -> wrapper.like(Item::getTitle, trimmedKeyword)
+                                .or()
+                                .like(Item::getDescription, trimmedKeyword))
+                .eq(trimmedCategory != null && !trimmedCategory.isBlank(), Item::getCategory, trimmedCategory)
                 .eq(Item::getStatus, "ON_SHELF")
                 .orderByDesc(Item::getCreateTime);
         return itemMapper.selectList(query);

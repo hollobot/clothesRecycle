@@ -364,10 +364,15 @@
 }
 
 .th-btn.primary {
-  background: var(--green);
-  border-color: var(--green);
+  background: var(--el-color-primary);
+  border-color: var(--el-color-primary);
   color: var(--white);
   font-weight: 500;
+}
+
+.th-btn.primary:hover {
+  background: var(--el-color-primary-light-3);
+  border-color: var(--el-color-primary-light-3);
 }
 
 .th-btn:disabled {
@@ -573,15 +578,21 @@
 }
 
 .abtn-pass {
-  background: var(--green-pale);
-  color: var(--green);
-  border: 1px solid var(--green);
+  background: var(--el-color-success-light-8);
+  color: var(--el-color-success);
+  border: 1px solid var(--el-color-success);
 }
 
 .abtn-fail {
-  background: var(--red-pale);
-  color: var(--red);
-  border: 1px solid var(--red);
+  background: #fdeff0;
+  color: var(--el-color-danger);
+  border: 1px solid var(--el-color-danger);
+}
+
+.abtn-pass:disabled,
+.abtn-fail:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .form-grid {

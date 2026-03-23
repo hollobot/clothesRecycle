@@ -38,13 +38,15 @@ const loadData = async () => {
 const pendingItems = computed(
   () =>
     items.value.filter((item) =>
-      ['PENDING', 'AUDITING'].includes(String(item.status || '').toUpperCase()),
+      // 兼容历史状态值，优先匹配后端当前状态：PENDING_AUDIT。
+      ['PENDING_AUDIT', 'PENDING', 'AUDITING'].includes(String(item.status || '').toUpperCase()),
     ).length,
 )
 
 const approvedItems = computed(
   () =>
     items.value.filter((item) =>
+      // 兼容历史字段 APPROVED，当前后端审核通过后状态为 ON_SHELF。
       ['APPROVED', 'ON_SHELF'].includes(String(item.status || '').toUpperCase()),
     ).length,
 )

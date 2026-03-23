@@ -12,4 +12,9 @@ public class LoginVo {
     private String token;
     private String role;
     private String name;
+    private String phone;
+    private String studentId;
+    private Long campusId;
+    private String avatarUrl;
+    private Integer pointBalance;
 }

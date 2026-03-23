@@ -20,6 +20,12 @@ const routes = [
         meta: { auth: true },
       },
       {
+        path: 'my-items',
+        name: 'my-items',
+        component: () => import('@/views/item/MyItemsView.vue'),
+        meta: { auth: true },
+      },
+      {
         path: 'messages',
         name: 'messages',
         component: () => import('@/views/message/MessagesView.vue'),
@@ -29,6 +35,12 @@ const routes = [
         path: 'profile',
         name: 'profile',
         component: () => import('@/views/profile/ProfileView.vue'),
+        meta: { auth: true },
+      },
+      {
+        path: 'profile/edit',
+        name: 'profile-edit',
+        component: () => import('@/views/profile/ProfileEditView.vue'),
         meta: { auth: true },
       },
       {

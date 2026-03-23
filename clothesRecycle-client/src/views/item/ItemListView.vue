@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getCampusList } from '@/api/campus'
 import { getItemList } from '@/api/item'
@@ -29,7 +29,7 @@ const statusClassMap = {
 
 const thumbClassPool = ['t-green', 't-amber', 't-blue', 't-gray']
 
-const getStatusText = (status) => statusTextMap[status] || status || '-'
+const getStatusText = (status) => statusTextMap[status] || '未知状态'
 const getStatusClass = (status) => statusClassMap[status] || 'status-default'
 const getThumbClass = (item, index) => {
   // 无封面图时按分类/序号给占位块上色，保持与原型图一致的视觉层次。
@@ -39,28 +39,13 @@ const getThumbClass = (item, index) => {
   return thumbClassPool[index % thumbClassPool.length]
 }
 
-// 广场筛选：先按校区拉取，再在前端按分类 + 关键词做轻量过滤。
-const filteredList = computed(() => {
-  const keyword = appliedKeyword.value.trim().toLowerCase()
-
-  return list.value.filter((item) => {
-    const categoryMatched =
-      activeCategory.value === '全部' || item.category === activeCategory.value
-    if (!categoryMatched) return false
-
-    if (!keyword) return true
-
-    const searchable = [item.title, item.category, item.sizeType, item.conditionLevel]
-      .filter(Boolean)
-      .join(' ')
-      .toLowerCase()
-    return searchable.includes(keyword)
-  })
-})
-
 const load = async () => {
   const campusId = activeCampusId.value ? Number(activeCampusId.value) : undefined
-  list.value = await getItemList(campusId)
+  const category = activeCategory.value === '全部' ? undefined : activeCategory.value
+  const keyword = appliedKeyword.value.trim() || undefined
+
+  // 广场搜索走后端查询，保证关键词与分类筛选结果准确。
+  list.value = await getItemList({ campusId, category, keyword })
 }
 
 const loadCampus = async () => {
@@ -68,13 +53,23 @@ const loadCampus = async () => {
 }
 
 const onSearch = () => {
-  // 点击搜索按钮时才应用关键词，避免频繁重绘带来的抖动。
+  // 点击搜索按钮后应用关键词，并重新请求后端。
   appliedKeyword.value = searchKeyword.value
+  load()
 }
 
 const onClearSearch = () => {
   searchKeyword.value = ''
   appliedKeyword.value = ''
+  load()
+}
+
+/**
+ * 切换分类后立即刷新广场数据。
+ */
+const onSelectCategory = (category) => {
+  activeCategory.value = category
+  load()
 }
 
 onMounted(async () => {
@@ -130,16 +125,16 @@ onMounted(async () => {
         :key="category"
         class="chip"
         :class="{ active: activeCategory === category }"
-        @click="activeCategory = category"
+        @click="onSelectCategory(category)"
       >
         {{ category }}
       </button>
     </div>
 
-    <div class="grid-2" v-if="filteredList.length">
+    <div class="grid-2" v-if="list.length">
       <article
         class="item-card"
-        v-for="(item, index) in filteredList"
+        v-for="(item, index) in list"
         :key="item.id"
         @click="$router.push(`/item/${item.id}`)"
       >

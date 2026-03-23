@@ -3,8 +3,10 @@ package com.example.project.controller.admin;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.project.common.result.Result;
+import com.example.project.exception.BusinessException;
 import com.example.project.mapper.ItemMapper;
 import com.example.project.model.po.Item;
+import com.example.project.model.vo.item.ItemDetailVo;
 import com.example.project.service.ItemService;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,13 +39,21 @@ public class ItemAdminController {
     }
 
     /**
+     * 查询物品审核详情（含图片列表）。
+     */
+    @GetMapping("/{itemId}")
+    public Result<ItemDetailVo> detail(@PathVariable Long itemId) {
+        return Result.ok(itemService.getDetail(itemId));
+    }
+
+    /**
      * 审核物品。
      */
     @PostMapping("/{itemId}/audit")
     public Result<Void> audit(@PathVariable Long itemId,
                               @RequestParam boolean approved,
                               @RequestParam(required = false) String reason) {
-        Long adminId = Long.valueOf(String.valueOf(StpUtil.getLoginId()));
+        Long adminId = extractAdminId();
         itemService.audit(itemId, approved, reason, adminId);
         return Result.ok();
     }
@@ -54,8 +64,25 @@ public class ItemAdminController {
     @PostMapping("/{itemId}/force-off-shelf")
     public Result<Void> forceOffShelf(@PathVariable Long itemId,
                                       @RequestParam(required = false) String reason) {
-        Long adminId = Long.valueOf(String.valueOf(StpUtil.getLoginId()));
+        Long adminId = extractAdminId();
         itemService.forceOffShelf(itemId, reason, adminId);
         return Result.ok();
+    }
+
+    /**
+     * 解析当前登录管理员 ID。
+     * <p>管理端登录态格式为 ADMIN_{id}，例如 ADMIN_1。</p>
+     */
+    private Long extractAdminId() {
+        String loginId = String.valueOf(StpUtil.getLoginId());
+        if (!loginId.startsWith("ADMIN_")) {
+            throw new BusinessException("管理员登录态无效，请重新登录");
+        }
+        String adminIdText = loginId.substring("ADMIN_".length());
+        try {
+            return Long.valueOf(adminIdText);
+        } catch (NumberFormatException e) {
+            throw new BusinessException("管理员登录态无效，请重新登录");
+        }
     }
 }

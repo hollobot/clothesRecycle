@@ -1,10 +1,12 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getMessagePage, markAllMessagesRead, markMessageRead } from '@/api/message'
 import { useNotifyStore } from '@/stores/notify'
 
 const notifyStore = useNotifyStore()
+const router = useRouter()
 const pageData = ref({ records: [], total: 0, pageNum: 1, pageSize: 10 })
 
 const load = async () => {
@@ -30,6 +32,28 @@ const onReadAll = async () => {
   }
 }
 
+/**
+ * 消息跳转规则：审核消息跳转我的发布，订单消息跳转我的订单。
+ */
+const resolveMessageRoute = (message) => {
+  const type = String(message?.msgType || '').toUpperCase()
+  if (type === 'AUDIT') return '/my-items'
+  if (type === 'ORDER') return '/orders'
+  return '/messages'
+}
+
+const onOpenMessage = async (message) => {
+  try {
+    if (message.readStatus !== 1) {
+      await markMessageRead(message.id)
+      await notifyStore.loadUnreadCount()
+    }
+    router.push(resolveMessageRoute(message))
+  } catch (error) {
+    ElMessage.error(error.message || '打开消息失败')
+  }
+}
+
 onMounted(async () => {
   try {
     await Promise.all([load(), notifyStore.loadUnreadCount()])
@@ -51,7 +75,12 @@ onMounted(async () => {
     </div>
 
     <div class="section" v-else>
-      <article class="message-row" v-for="message in pageData.records" :key="message.id">
+      <article
+        class="message-row"
+        :class="{ unread: message.readStatus !== 1 }"
+        v-for="message in pageData.records"
+        :key="message.id"
+      >
         <div class="notif-icon" :class="message.readStatus === 1 ? 'ni-blue' : 'ni-green'"></div>
         <div class="message-main">
           <div class="message-title-row">
@@ -65,13 +94,17 @@ onMounted(async () => {
             message.createTime?.slice(0, 16)?.replace('T', ' ') || '-'
           }}</small>
         </div>
-        <button
-          v-if="message.readStatus !== 1"
-          class="btn btn-light"
-          @click="onMarkRead(message.id)"
-        >
-          标记已读
-        </button>
+        <div class="message-right">
+          <button
+            v-if="message.readStatus !== 1"
+            class="btn btn-light message-action-btn"
+            @click="onMarkRead(message.id)"
+          >
+            标记已读
+          </button>
+          <span class="message-arrow">›</span>
+        </div>
+        <button class="message-mask-btn" @click="onOpenMessage(message)">查看详情</button>
       </article>
     </div>
   </div>

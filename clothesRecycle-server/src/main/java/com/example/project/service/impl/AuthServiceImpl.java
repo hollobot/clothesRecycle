@@ -109,6 +109,11 @@ public class AuthServiceImpl implements AuthService {
         vo.setToken(token);
         vo.setRole("USER");
         vo.setName(user.getName());
+        vo.setPhone(user.getPhone());
+        vo.setStudentId(user.getStudentId());
+        vo.setCampusId(user.getCampusId());
+        vo.setAvatarUrl(user.getAvatarUrl());
+        vo.setPointBalance(user.getPointBalance());
         return vo;
     }
 }

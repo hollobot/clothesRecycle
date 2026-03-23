@@ -7,6 +7,7 @@ import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.SetBucketPolicyArgs;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,14 @@ import java.util.UUID;
 public class MinioFileStorageServiceImpl implements FileStorageService {
 
     private static final String IMAGE_CONTENT_TYPE_PREFIX = "image/";
+    /**
+     * 发布物品时最多上传图片数量。
+     */
+    private static final int MAX_IMAGE_COUNT = 6;
+    /**
+     * 单张图片大小上限（5MB）。
+     */
+    private static final long MAX_IMAGE_SIZE_BYTES = 5L * 1024 * 1024;
 
     private final MinioClient minioClient;
     private final MinioProperties minioProperties;
@@ -36,6 +45,9 @@ public class MinioFileStorageServiceImpl implements FileStorageService {
         if (files == null || files.isEmpty()) {
             throw new BusinessException("请至少上传一张图片");
         }
+        if (files.size() > MAX_IMAGE_COUNT) {
+            throw new BusinessException("最多上传6张图片");
+        }
 
         ensureBucketExists();
 
@@ -47,6 +59,9 @@ public class MinioFileStorageServiceImpl implements FileStorageService {
             String contentType = file.getContentType();
             if (contentType == null || !contentType.startsWith(IMAGE_CONTENT_TYPE_PREFIX)) {
                 throw new BusinessException("仅支持上传图片文件");
+            }
+            if (file.getSize() > MAX_IMAGE_SIZE_BYTES) {
+                throw new BusinessException("单张图片大小不能超过5MB");
             }
 
             String objectName = buildObjectName(file.getOriginalFilename());
@@ -73,9 +88,29 @@ public class MinioFileStorageServiceImpl implements FileStorageService {
             if (!exists) {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
             }
+            // 设置桶为公开可读，确保前端可通过 URL 直接访问图片。
+            minioClient.setBucketPolicy(SetBucketPolicyArgs.builder()
+                    .bucket(bucketName)
+                    .config(buildPublicReadPolicy(bucketName))
+                    .build());
         } catch (Exception e) {
             throw new BusinessException("存储服务不可用");
         }
+    }
+
+    /**
+     * 构建 MinIO 桶公开读策略（仅允许读取对象，不开放写权限）。
+     */
+    private String buildPublicReadPolicy(String bucketName) {
+        return "{" +
+                "\"Version\":\"2012-10-17\"," +
+                "\"Statement\":[{" +
+                "\"Effect\":\"Allow\"," +
+                "\"Principal\":{\"AWS\":[\"*\"]}," +
+                "\"Action\":[\"s3:GetObject\"]," +
+                "\"Resource\":[\"arn:aws:s3:::" + bucketName + "/*\"]" +
+                "}]" +
+                "}";
     }
 
     private String buildObjectName(String originalFilename) {

@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { auditItem, forceOffShelf, getAdminItems } from '@/api/itemAdmin'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { auditItem, forceOffShelf, getAdminItemDetail, getAdminItems } from '@/api/itemAdmin'
 
 const list = ref([])
 const loading = ref(false)
@@ -8,31 +9,61 @@ const loadError = ref('')
 const keyword = ref('')
 const status = ref('all')
 const activeId = ref(null)
+const activeDetail = ref(null)
 
 const statusOptions = [
   { value: 'all', label: '全部状态' },
-  { value: 'PENDING', label: '待审核' },
-  { value: 'APPROVED', label: '已通过' },
+  { value: 'PENDING_AUDIT', label: '待审核' },
+  { value: 'ON_SHELF', label: '已上架' },
+  { value: 'TRADING', label: '交易中' },
+  { value: 'DONE', label: '已完成' },
   { value: 'REJECTED', label: '已拒绝' },
-  { value: 'OFF_SHELF', label: '已下架' },
+  { value: 'FORCE_OFF_SHELF', label: '强制下架' },
 ]
 
 const statusClassMap = {
-  PENDING: 'badge-pending',
-  APPROVED: 'badge-ok',
+  PENDING_AUDIT: 'badge-pending',
+  ON_SHELF: 'badge-ok',
+  TRADING: 'badge-ok',
+  DONE: 'badge-normal',
   REJECTED: 'badge-banned',
-  OFF_SHELF: 'badge-banned',
+  FORCE_OFF_SHELF: 'badge-banned',
 }
 
 const statusLabelMap = {
-  PENDING: '待审核',
-  APPROVED: '已通过',
+  PENDING_AUDIT: '待审核',
+  ON_SHELF: '已上架',
+  TRADING: '交易中',
+  DONE: '已完成',
   REJECTED: '已拒绝',
-  OFF_SHELF: '已下架',
+  FORCE_OFF_SHELF: '强制下架',
 }
 
 const getStatusClass = (value) => statusClassMap[value] || 'badge-normal'
-const getStatusLabel = (value) => statusLabelMap[value] || value || '未知'
+const getStatusLabel = (value) => statusLabelMap[value] || '未知状态'
+
+/**
+ * 当前选中记录是否允许审核通过/拒绝。
+ */
+const canAuditCurrent = computed(() => activeDetail.value?.status === 'PENDING_AUDIT')
+
+/**
+ * 当前选中记录是否允许强制下架。
+ */
+const canForceOffShelfCurrent = computed(() =>
+  ['ON_SHELF', 'TRADING'].includes(String(activeDetail.value?.status || '').toUpperCase()),
+)
+
+/**
+ * 加载当前选中物品详情（含图片）。
+ */
+const loadActiveDetail = async (itemId) => {
+  if (!itemId) {
+    activeDetail.value = null
+    return
+  }
+  activeDetail.value = await getAdminItemDetail(itemId)
+}
 
 const load = async () => {
   loading.value = true
@@ -46,8 +77,10 @@ const load = async () => {
     if (!activeId.value || !list.value.some((item) => item.id === activeId.value)) {
       activeId.value = list.value[0]?.id || null
     }
+    await loadActiveDetail(activeId.value)
   } catch (error) {
     loadError.value = error?.message || '物品列表加载失败'
+    activeDetail.value = null
   } finally {
     loading.value = false
   }
@@ -66,20 +99,31 @@ const filteredList = computed(() => {
   )
 })
 
-const activeItem = computed(
-  () => filteredList.value.find((item) => item.id === activeId.value) || null,
-)
+const activeItem = computed(() => activeDetail.value)
 
-const selectItem = (itemId) => {
+const selectItem = async (itemId) => {
   activeId.value = itemId
+  try {
+    await loadActiveDetail(itemId)
+  } catch (error) {
+    ElMessage.error(error?.message || '加载审核详情失败')
+  }
 }
 
 const runAudit = async (approved) => {
-  if (!activeItem.value) return
+  if (!activeItem.value || !canAuditCurrent.value) return
 
   let reason = ''
   if (!approved) {
-    reason = window.prompt('请输入拒绝原因', '图片与描述不一致') || ''
+    const { value } = await ElMessageBox.prompt('请输入拒绝原因', '拒绝审核', {
+      confirmButtonText: '确认拒绝',
+      cancelButtonText: '取消',
+      inputPlaceholder: '例如：图片与描述不一致',
+      inputValue: '图片与描述不一致',
+      inputPattern: /^.{2,200}$/,
+      inputErrorMessage: '拒绝原因长度需为 2-200 个字符',
+    }).catch(() => ({ value: '' }))
+    reason = value || ''
     if (!reason.trim()) return
   } else {
     reason = '审核通过'
@@ -87,23 +131,33 @@ const runAudit = async (approved) => {
 
   try {
     await auditItem(activeItem.value.id, approved, reason)
+    ElMessage.success(approved ? '审核已通过' : '已拒绝该物品')
     await load()
   } catch (error) {
-    window.alert(error?.message || '审核失败，请稍后重试')
+    ElMessage.error(error?.message || '审核失败，请稍后重试')
   }
 }
 
 const runForceOffShelf = async () => {
-  if (!activeItem.value) return
+  if (!activeItem.value || !canForceOffShelfCurrent.value) return
 
-  const reason = window.prompt('请输入强制下架原因', '管理员巡检下架') || ''
+  const { value } = await ElMessageBox.prompt('请输入强制下架原因', '强制下架', {
+    confirmButtonText: '确认下架',
+    cancelButtonText: '取消',
+    inputPlaceholder: '例如：违规内容',
+    inputValue: '管理员巡检下架',
+    inputPattern: /^.{2,200}$/,
+    inputErrorMessage: '下架原因长度需为 2-200 个字符',
+  }).catch(() => ({ value: '' }))
+  const reason = value || ''
   if (!reason.trim()) return
 
   try {
     await forceOffShelf(activeItem.value.id, reason)
+    ElMessage.success('已强制下架该物品')
     await load()
   } catch (error) {
-    window.alert(error?.message || '操作失败，请稍后重试')
+    ElMessage.error(error?.message || '操作失败，请稍后重试')
   }
 }
 
@@ -165,9 +219,19 @@ onMounted(load)
       <article class="chart-card">
         <template v-if="activeItem">
           <div class="chart-title">审核详情</div>
-          <div class="audit-imgs-grid">
-            <div class="aimg t-green">封面预览</div>
-            <div class="aimg t-amber">附图预留</div>
+          <div class="audit-imgs-grid" v-if="Array.isArray(activeItem.imageUrls) && activeItem.imageUrls.length">
+            <el-image
+              v-for="(url, index) in activeItem.imageUrls"
+              :key="`${activeItem.id}-${index}`"
+              :src="url"
+              :preview-src-list="activeItem.imageUrls"
+              fit="cover"
+              class="audit-image"
+              preview-teleported
+            />
+          </div>
+          <div class="audit-imgs-grid" v-else>
+            <div class="aimg t-green">暂无图片</div>
           </div>
           <div class="audit-info">
             <div class="ai-row">
@@ -200,13 +264,56 @@ onMounted(load)
             </div>
           </div>
           <div class="audit-btns">
-            <button class="abtn-pass" @click="runAudit(true)">通过</button>
-            <button class="abtn-fail" @click="runAudit(false)">拒绝</button>
+            <button class="abtn-pass" :disabled="!canAuditCurrent" @click="runAudit(true)">通过</button>
+            <button class="abtn-fail" :disabled="!canAuditCurrent" @click="runAudit(false)">拒绝</button>
           </div>
-          <button class="th-btn" style="margin-top: 8px" @click="runForceOffShelf">强制下架</button>
+          <button
+            class="th-btn"
+            style="margin-top: 8px"
+            :disabled="!canForceOffShelfCurrent"
+            @click="runForceOffShelf"
+          >
+            强制下架
+          </button>
         </template>
         <div v-else class="table-empty">请先选择一条物品</div>
       </article>
     </div>
   </section>
 </template>
+
+<style scoped>
+/* 审核详情图片采用响应式网格：大屏多列，小屏自动降列。 */
+.audit-imgs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.audit-image {
+  width: 100%;
+  height: 96px;
+  border-radius: 6px;
+  border: 1px solid var(--gray-200);
+}
+
+@media (max-width: 768px) {
+  .audit-imgs-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .audit-image {
+    height: 88px;
+  }
+}
+
+@media (max-width: 480px) {
+  .audit-imgs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .audit-image {
+    height: 180px;
+  }
+}
+</style>

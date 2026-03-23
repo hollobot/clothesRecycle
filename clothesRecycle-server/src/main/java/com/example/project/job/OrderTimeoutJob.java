@@ -1,8 +1,11 @@
 package com.example.project.job;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.project.mapper.ItemMapper;
 import com.example.project.mapper.OrderMapper;
+import com.example.project.model.po.Item;
 import com.example.project.model.po.Order;
+import com.example.project.service.MessageService;
 import com.example.project.service.PointService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,14 +26,20 @@ public class OrderTimeoutJob {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final OrderMapper orderMapper;
+    private final ItemMapper itemMapper;
     private final PointService pointService;
+    private final MessageService messageService;
 
     public OrderTimeoutJob(RedisTemplate<String, Object> redisTemplate,
                            OrderMapper orderMapper,
-                           PointService pointService) {
+                           ItemMapper itemMapper,
+                           PointService pointService,
+                           MessageService messageService) {
         this.redisTemplate = redisTemplate;
         this.orderMapper = orderMapper;
+        this.itemMapper = itemMapper;
         this.pointService = pointService;
+        this.messageService = messageService;
     }
 
     /**
@@ -55,9 +64,19 @@ public class OrderTimeoutJob {
             if ("PENDING_CONFIRM".equals(order.getStatus()) || "PENDING_DELIVERY".equals(order.getStatus())) {
                 order.setStatus("CANCELLED");
                 orderMapper.updateById(order);
+
+                // 超时取消后恢复物品上架状态（若物品未完成）。
+                Item item = itemMapper.selectById(order.getItemId());
+                if (item != null && !"DONE".equals(item.getStatus())) {
+                    item.setStatus("ON_SHELF");
+                    itemMapper.updateById(item);
+                }
+
                 if ("POINT".equals(order.getAcquireType()) && order.getPointAmount() > 0) {
                     pointService.unfreezePoint(order.getBuyerId(), order.getPointAmount(), "ORDER_TIMEOUT", order.getId(), "订单超时自动取消解冻");
                 }
+                messageService.sendMessage(order.getBuyerId(), "订单已超时取消", "订单超时未处理，系统已自动取消", "ORDER");
+                messageService.sendMessage(order.getSellerId(), "订单已超时取消", "订单超时未处理，系统已自动取消", "ORDER");
                 log.info("订单超时已取消, orderId={}", orderId);
             }
             redisTemplate.opsForZSet().remove(ORDER_TIMEOUT_KEY, orderIdObj);

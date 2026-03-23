@@ -12,6 +12,11 @@ const userStore = useUserStore()
 
 const detail = ref(null)
 const isFavorite = ref(false)
+const favoriteLoading = ref(false)
+const claimLoading = ref(false)
+const currentUserId = computed(() =>
+  Number(userStore.profile?.userId || userStore.profile?.id || 0),
+)
 
 const statusTextMap = {
   ON_SHELF: '可认领',
@@ -19,6 +24,8 @@ const statusTextMap = {
   DONE: '已完成',
   PENDING_AUDIT: '待审核',
   REJECTED: '已拒绝',
+  OFF_SHELF: '已下架',
+  FORCE_OFF_SHELF: '强制下架',
 }
 
 const gallery = computed(() => {
@@ -30,6 +37,9 @@ const gallery = computed(() => {
 })
 
 const isClaimable = () => detail.value?.status === 'ON_SHELF'
+const isOwnItem = computed(() => Number(detail.value?.userId || 0) === currentUserId.value)
+const favoriteDisabled = computed(() => favoriteLoading.value || isOwnItem.value)
+const claimDisabled = computed(() => !isClaimable() || isOwnItem.value || claimLoading.value)
 
 const loadFavorite = async () => {
   if (!userStore.isLogin) {
@@ -49,17 +59,25 @@ const handleClaim = async () => {
     ElMessage.warning('请先登录再认领')
     return
   }
+  if (isOwnItem.value) {
+    ElMessage.warning('自己发布的物品不能认领')
+    return
+  }
   if (!isClaimable()) {
     ElMessage.warning('当前物品不可认领')
     return
   }
+  if (claimLoading.value) return
 
   try {
+    claimLoading.value = true
     await createOrder({ itemId: Number(route.params.id), remark: '我想认领这件衣物' })
     ElMessage.success('申请认领成功')
     await load()
   } catch (error) {
     ElMessage.error(error.message || '认领失败')
+  } finally {
+    claimLoading.value = false
   }
 }
 
@@ -68,17 +86,27 @@ const handleToggleFavorite = async () => {
     ElMessage.warning('请先登录再收藏')
     return
   }
+  if (isOwnItem.value) {
+    ElMessage.warning('自己发布的物品无需收藏')
+    return
+  }
+  if (favoriteLoading.value) return
 
   try {
+    favoriteLoading.value = true
     if (isFavorite.value) {
       await removeFavorite(Number(route.params.id))
       isFavorite.value = false
+      ElMessage.success('已取消收藏')
       return
     }
     await addFavorite(Number(route.params.id))
     isFavorite.value = true
+    ElMessage.success('收藏成功')
   } catch (error) {
     ElMessage.error(error.message || '操作失败')
+  } finally {
+    favoriteLoading.value = false
   }
 }
 
@@ -123,17 +151,17 @@ onMounted(async () => {
         <span class="chip">{{ detail.conditionLevel }}</span>
       </div>
       <p class="detail-desc">{{ detail.description || '暂无描述' }}</p>
-      <p class="helper-text">状态：{{ statusTextMap[detail.status] || detail.status }}</p>
+      <p class="helper-text">状态：{{ statusTextMap[detail.status] || '未知状态' }}</p>
       <p class="helper-text">获取方式：{{ formatAcquire() }}</p>
       <p class="helper-text">发布时间：{{ detail.createTime?.slice(0, 10) || '-' }}</p>
 
       <div class="action-row">
-        <button class="btn btn-light" @click="handleToggleFavorite">
-          {{ isFavorite ? '取消收藏' : '收藏' }}
-        </button>
-        <button class="btn btn-primary" :disabled="!isClaimable()" @click="handleClaim">
-          {{ isClaimable() ? '申请认领' : '暂不可认领' }}
-        </button>
+        <el-button :type="isFavorite ? 'primary' : 'default'" :disabled="favoriteDisabled" @click="handleToggleFavorite">
+          {{ isOwnItem ? '我的发布（不可收藏）' : favoriteLoading ? '处理中...' : isFavorite ? '已收藏，点我取消' : '收藏' }}
+        </el-button>
+        <el-button type="success" :disabled="claimDisabled" @click="handleClaim">
+          {{ isOwnItem ? '本人发布不可认领' : claimLoading ? '申请中...' : isClaimable() ? '申请认领' : '暂不可认领' }}
+        </el-button>
       </div>
     </div>
   </div>

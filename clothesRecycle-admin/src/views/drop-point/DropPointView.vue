@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { getCampusList } from '@/api/campus'
+import { getCampusOptions } from '@/api/campus'
 import {
   changeDropPointStatus,
   createDropPoint,
@@ -39,7 +39,8 @@ const rules = {
 }
 
 const loadCampuses = async () => {
-  const res = await getCampusList().catch(() => [])
+  // 回收点页对校区管理员开放，需走公开校区接口，避免 /api/super 权限限制。
+  const res = await getCampusOptions().catch(() => [])
   campuses.value = Array.isArray(res) ? res : []
 }
 

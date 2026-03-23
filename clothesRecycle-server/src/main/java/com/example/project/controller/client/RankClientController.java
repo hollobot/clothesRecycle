@@ -2,6 +2,7 @@ package com.example.project.controller.client;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.example.project.common.result.Result;
+import com.example.project.exception.BusinessException;
 import com.example.project.mapper.UserMapper;
 import com.example.project.model.po.User;
 import com.example.project.service.RankService;
@@ -33,7 +34,7 @@ public class RankClientController {
                                             @RequestParam(defaultValue = "50") Integer limit) {
         Long currentUserId = null;
         if (StpUtil.isLogin()) {
-            currentUserId = Long.valueOf(String.valueOf(StpUtil.getLoginId()));
+            currentUserId = getCurrentUserId();
         }
         return Result.ok(rankService.getRankList(type, campusId, limit, currentUserId));
     }
@@ -42,20 +43,35 @@ public class RankClientController {
      * 查询我的排名。
      */
     @GetMapping("/api/user/rank/mine")
-    public Result<Map<String, Object>> mine(@RequestParam Long campusId) {
-        Long currentUserId = Long.valueOf(String.valueOf(StpUtil.getLoginId()));
+    public Result<Map<String, Object>> mine(@RequestParam(required = false) Long campusId) {
+        Long currentUserId = getCurrentUserId();
 
-        Map<String, Object> pointsRank = rankService.getRankList("points", campusId, 50, currentUserId);
-        Map<String, Object> donateRank = rankService.getRankList("donate", campusId, 50, currentUserId);
+        Map<String, Object> pointsRank = rankService.getRankList("points", campusId, 10, currentUserId);
+        Map<String, Object> donateRank = rankService.getRankList("donate", campusId, 10, currentUserId);
 
         User user = userMapper.selectById(currentUserId);
         Long userCampusId = user == null ? campusId : user.getCampusId();
-        Map<String, Object> campusRank = rankService.getRankList("campus", userCampusId, 50, null);
+        Map<String, Object> campusRank = rankService.getRankList("campus", userCampusId, 10, null);
 
         Map<String, Object> result = new HashMap<>();
         result.put("points", pointsRank.get("myRank"));
         result.put("donate", donateRank.get("myRank"));
         result.put("campus", campusRank.get("list"));
         return Result.ok(result);
+    }
+
+    /**
+     * 解析当前登录用户 ID，兼容 Sa-Token 登录态对象与字符串类型。
+     */
+    private Long getCurrentUserId() {
+        Object loginId = StpUtil.getLoginId();
+        if (loginId instanceof Number number) {
+            return number.longValue();
+        }
+        try {
+            return Long.valueOf(String.valueOf(loginId));
+        } catch (NumberFormatException e) {
+            throw new BusinessException("用户登录态无效，请重新登录");
+        }
     }
 }

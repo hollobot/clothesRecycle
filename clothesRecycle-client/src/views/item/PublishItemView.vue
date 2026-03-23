@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getCampusList } from '@/api/campus'
 import { getDropPoints } from '@/api/dropPoint'
@@ -8,6 +9,7 @@ import { publishItem } from '@/api/item'
 
 const MAX_IMAGE_COUNT = 9
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024
+const router = useRouter()
 
 const form = reactive({
   title: '',
@@ -99,20 +101,8 @@ const handleSubmit = async () => {
 
     ElMessage.success('发布成功，等待审核')
 
-    Object.assign(form, {
-      title: '',
-      category: '上装',
-      genderType: '通用',
-      sizeType: 'M',
-      conditionLevel: '九成新',
-      description: '',
-      acquireType: 'FREE',
-      campusId: campuses.value[0]?.id || 1,
-      pointPrice: 0,
-    })
-
-    uploadFileList.value = []
-    uploadedImageUrls.value = []
+    // 发布成功后回到首页，便于用户继续浏览与分享。
+    router.push('/')
   } catch (error) {
     ElMessage.error(error.message || '发布失败')
   } finally {

@@ -7,6 +7,7 @@ import com.example.project.mapper.ItemMapper;
 import com.example.project.model.po.Favorite;
 import com.example.project.model.po.Item;
 import com.example.project.service.FavoriteService;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,7 +44,11 @@ public class FavoriteServiceImpl implements FavoriteService {
         Favorite favorite = new Favorite();
         favorite.setUserId(userId);
         favorite.setItemId(itemId);
-        favoriteMapper.insert(favorite);
+        try {
+            favoriteMapper.insert(favorite);
+        } catch (DuplicateKeyException e) {
+            // 并发重复点击收藏时，唯一索引兜底后视为幂等成功。
+        }
     }
 
     @Override

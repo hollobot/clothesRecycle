@@ -143,6 +143,9 @@ const submitForm = async () => {
 
     formVisible.value = false
     await loadAdmins()
+  } catch (error) {
+    // 新建/编辑管理员失败时给出明确提示，避免白屏或无反馈。
+    ElMessage.error(error?.message || '保存管理员失败，请稍后重试')
   } finally {
     submitLoading.value = false
   }

@@ -11,6 +11,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 /**
  * 全局异常处理器
@@ -71,6 +72,16 @@ public class GlobalExceptionHandler {
     public Result<Void> handleNotPermissionException(NotPermissionException e) {
         log.warn("无权限访问: {}", LogMaskUtil.mask(e.getMessage()));
         return Result.fail(ResultCode.FORBIDDEN);
+    }
+
+    /**
+     * 处理文件上传大小超限异常。
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public Result<Void> handleMaxUploadSizeExceeded(MaxUploadSizeExceededException e) {
+        String msg = "上传文件过大，单张不超过5MB，总大小不超过30MB";
+        log.warn("文件上传超限: {}", LogMaskUtil.mask(msg));
+        return Result.fail(msg);
     }
 
     /**
