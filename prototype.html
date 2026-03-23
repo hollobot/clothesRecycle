@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>校园二手衣物回收系统 — 原型图</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #2E7D52;
+    --green-light: #4CAF7D;
+    --green-pale: #E8F5EE;
+    --green-mid: #C5E8D4;
+    --amber: #D4870A;
+    --amber-pale: #FFF3DC;
+    --red: #C0392B;
+    --red-pale: #FDECEA;
+    --blue: #1565C0;
+    --blue-pale: #E3F0FF;
+    --gray-50: #FAFAFA;
+    --gray-100: #F4F4F4;
+    --gray-200: #E8E8E8;
+    --gray-300: #D0D0D0;
+    --gray-400: #A0A0A0;
+    --gray-600: #666;
+    --gray-800: #333;
+    --white: #fff;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 4px rgba(0,0,0,.07);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: #F0F2F0;
+    color: var(--gray-800);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── Layout ───────────────────────────── */
+  .page { padding: 48px 32px; max-width: 1400px; margin: 0 auto; }
+  .section { margin-bottom: 64px; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 28px;
+  }
+  .section-title {
+    font-size: 20px; font-weight: 700; color: var(--gray-800);
+    letter-spacing: -.3px;
+  }
+  .section-badge {
+    font-size: 11px; font-weight: 500; padding: 3px 10px;
+    border-radius: 20px; background: var(--green-pale);
+    color: var(--green); border: 1px solid var(--green-mid);
+  }
+  .section-line { flex: 1; height: 1px; background: var(--gray-200); }
+  .frames-row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+
+  /* ── Frame label ─────────────────────── */
+  .frame-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .frame-label {
+    font-size: 12px; color: var(--gray-400); font-weight: 400;
+    letter-spacing: .3px;
+  }
+
+  /* ── Phone frame ─────────────────────── */
+  .phone {
+    width: 220px; background: var(--gray-800);
+    border-radius: 32px; padding: 10px;
+    box-shadow: var(--shadow-md), 0 0 0 1px rgba(255,255,255,.05);
+    flex-shrink: 0;
+  }
+  .phone-screen {
+    background: var(--white); border-radius: 24px;
+    overflow: hidden; min-height: 420px;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .phone-notch {
+    height: 24px; background: var(--gray-50);
+    display: flex; align-items: center; justify-content: center;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .notch-bar {
+    width: 70px; height: 5px; background: var(--gray-800);
+    border-radius: 3px; opacity: .15;
+  }
+
+  /* ── App TopBar ──────────────────────── */
+  .app-topbar {
+    padding: 10px 14px 8px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .app-title { font-size: 15px; font-weight: 700; color: var(--gray-800); }
+  .icon-btn {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--gray-100); display: flex;
+    align-items: center; justify-content: center;
+  }
+  .icon-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+
+  /* ── Content blocks ──────────────────── */
+  .app-content { flex: 1; overflow: hidden; background: var(--gray-50); }
+  .search-bar {
+    margin: 10px 14px 8px;
+    background: var(--gray-100); border-radius: 20px;
+    padding: 7px 14px; font-size: 11px; color: var(--gray-400);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .search-circle {
+    width: 9px; height: 9px; border-radius: 50%;
+    border: 1.5px solid var(--gray-400);
+  }
+  .chips { display: flex; gap: 6px; padding: 0 14px 8px; overflow: hidden; }
+  .chip {
+    font-size: 10px; padding: 3px 9px; border-radius: 20px;
+    border: 1px solid var(--gray-200); color: var(--gray-600);
+    white-space: nowrap; background: var(--white);
+  }
+  .chip.active {
+    background: var(--green); color: var(--white); border-color: var(--green);
+  }
+  .grid-2 {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; padding: 0 14px 10px;
+  }
+  .item-card {
+    background: var(--white); border-radius: var(--radius-md);
+    overflow: hidden; border: 1px solid var(--gray-100);
+  }
+  .item-thumb {
+    height: 72px; display: flex; align-items: center;
+    justify-content: center; font-size: 9px; color: var(--gray-400);
+  }
+  .t-green { background: var(--green-pale); color: var(--green); }
+  .t-amber { background: var(--amber-pale); color: var(--amber); }
+  .t-blue  { background: var(--blue-pale);  color: var(--blue);  }
+  .t-gray  { background: var(--gray-100);   color: var(--gray-400); }
+  .item-info { padding: 6px 8px; }
+  .item-name { font-size: 10px; font-weight: 500; color: var(--gray-800); }
+  .item-meta { font-size: 9px; color: var(--gray-400); margin-top: 2px; }
+  .item-tag {
+    display: inline-block; margin-top: 3px;
+    font-size: 9px; padding: 1px 6px; border-radius: 4px;
+  }
+  .tag-free { background: var(--green-pale); color: var(--green); }
+  .tag-pts  { background: var(--amber-pale); color: var(--amber); }
+
+  /* ── Tab bar ─────────────────────────── */
+  .tab-bar {
+    display: flex; border-top: 1px solid var(--gray-100);
+    background: var(--white);
+  }
+  .tab-item {
+    flex: 1; padding: 7px 0; display: flex;
+    flex-direction: column; align-items: center; gap: 3px;
+  }
+  .tab-icon {
+    width: 18px; height: 18px; border-radius: 5px;
+    background: var(--gray-100);
+  }
+  .tab-icon.active { background: var(--green-pale); }
+  .tab-text { font-size: 9px; color: var(--gray-400); }
+  .tab-text.active { color: var(--green); font-weight: 500; }
+
+  /* ── Form ────────────────────────────── */
+  .form-area { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .f-label { font-size: 10px; color: var(--gray-400); margin-bottom: 3px; }
+  .f-input {
+    width: 100%; background: var(--gray-100); border: none;
+    border-radius: var(--radius-sm); padding: 7px 10px;
+    font-size: 11px; color: var(--gray-600);
+  }
+  .upload-zone {
+    border: 1.5px dashed var(--gray-300); border-radius: var(--radius-md);
+    padding: 16px; text-align: center; background: var(--gray-50);
+  }
+  .upload-plus {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--gray-200); margin: 0 auto 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: var(--gray-400);
+  }
+  .upload-text { font-size: 9px; color: var(--gray-400); }
+  .radio-row { display: flex; gap: 6px; }
+  .radio-btn {
+    flex: 1; text-align: center; font-size: 10px;
+    padding: 5px; border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-200); color: var(--gray-600);
+    background: var(--white);
+  }
+  .radio-btn.sel {
+    border-color: var(--green); background: var(--green-pale);
+    color: var(--green); font-weight: 500;
+  }
+  .submit-btn {
+    margin: 0 14px 10px; background: var(--green); color: var(--white);
+    border-radius: var(--radius-md); padding: 9px;
+    text-align: center; font-size: 12px; font-weight: 500;
+  }
+
+  /* ── Detail ──────────────────────────── */
+  .detail-hero {
+    height: 110px; display: flex; align-items: center;
+    justify-content: center; font-size: 11px;
+  }
+  .detail-body { padding: 10px 14px; flex: 1; }
+  .detail-title { font-size: 14px; font-weight: 700; }
+  .dtags { display: flex; gap: 4px; margin: 6px 0; flex-wrap: wrap; }
+  .dtag {
+    font-size: 9px; padding: 2px 7px; border-radius: 4px;
+    background: var(--gray-100); color: var(--gray-600);
+  }
+  .detail-desc { font-size: 10px; color: var(--gray-600); line-height: 1.5; }
+  .owner-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-top: 1px solid var(--gray-100);
+  }
+  .avatar-sm {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--green-pale); display: flex;
+    align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: var(--green);
+  }
+  .owner-info .name { font-size: 11px; font-weight: 500; }
+  .owner-info .dept { font-size: 9px; color: var(--gray-400); }
+  .action-row {
+    display: flex; gap: 8px; padding: 8px 14px 10px;
+  }
+  .btn-fav {
+    flex: 1; background: var(--gray-100); border-radius: var(--radius-md);
+    padding: 8px; text-align: center; font-size: 11px; color: var(--gray-600);
+  }
+  .btn-claim {
+    flex: 2; background: var(--green); border-radius: var(--radius-md);
+    padding: 8px; text-align: center; font-size: 11px;
+    color: var(--white); font-weight: 500;
+  }
+
+  /* ── Profile ─────────────────────────── */
+  .profile-hero {
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+    padding: 16px 14px 14px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .avatar-lg {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(255,255,255,.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: var(--white);
+  }
+  .profile-info .pname { font-size: 14px; font-weight: 700; color: var(--white); }
+  .profile-info .psub { font-size: 10px; color: rgba(255,255,255,.75); margin-top: 2px; }
+  .stat-strip {
+    display: flex; background: var(--white);
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .stat-cell {
+    flex: 1; padding: 10px 0; text-align: center;
+    border-right: 1px solid var(--gray-100);
+  }
+  .stat-cell:last-child { border-right: none; }
+  .stat-num { font-size: 16px; font-weight: 700; color: var(--gray-800); }
+  .stat-lbl { font-size: 9px; color: var(--gray-400); margin-top: 1px; }
+  .menu-list { background: var(--white); margin: 8px 0 0; }
+  .menu-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-bottom: 1px solid var(--gray-100);
+  }
+  .menu-left { display: flex; align-items: center; gap: 10px; }
+  .menu-dot {
+    width: 8px; height: 8px; border-radius: 2px;
+  }
+  .menu-text { font-size: 11px; color: var(--gray-800); }
+  .menu-arrow { font-size: 12px; color: var(--gray-300); }
+
+  /* ── Orders ──────────────────────────── */
+  .seg-ctrl {
+    display: flex; margin: 10px 14px 8px;
+    background: var(--gray-100); border-radius: var(--radius-md);
+    padding: 3px;
+  }
+  .seg-btn {
+    flex: 1; text-align: center; padding: 5px;
+    font-size: 10px; border-radius: var(--radius-sm);
+    color: var(--gray-400);
+  }
+  .seg-btn.active {
+    background: var(--white); color: var(--gray-800);
+    font-weight: 500; box-shadow: var(--shadow-sm);
+  }
+  .order-card {
+    margin: 0 14px 8px; background: var(--white);
+    border-radius: var(--radius-md); border: 1px solid var(--gray-100);
+    padding: 10px;
+  }
+  .order-top { display: flex; gap: 10px; }
+  .order-thumb {
+    width: 44px; height: 44px; border-radius: 8px;
+    flex-shrink: 0;
+  }
+  .order-name { font-size: 11px; font-weight: 500; }
+  .order-meta { font-size: 9px; color: var(--gray-400); margin-top: 2px; }
+  .status-pill {
+    display: inline-block; font-size: 9px;
+    padding: 2px 7px; border-radius: 4px; margin-top: 4px;
+  }
+  .s-pending { background: var(--amber-pale); color: var(--amber); }
+  .s-ok      { background: var(--green-pale); color: var(--green); }
+  .s-done    { background: var(--gray-100);   color: var(--gray-400); }
+  .order-actions {
+    display: flex; gap: 6px; margin-top: 8px;
+    padding-top: 8px; border-top: 1px solid var(--gray-100);
+  }
+  .oa-btn {
+    flex: 1; text-align: center; font-size: 10px;
+    padding: 5px; border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-200); color: var(--gray-600);
+  }
+  .oa-btn.primary {
+    background: var(--green); border-color: var(--green);
+    color: var(--white); font-weight: 500;
+  }
+
+  /* ── Notification ────────────────────── */
+  .notif-item {
+    display: flex; gap: 10px;
+    padding: 10px 14px; border-bottom: 1px solid var(--gray-100);
+    background: var(--white);
+  }
+  .notif-icon {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .ni-green { background: var(--green-pale); }
+  .ni-amber { background: var(--amber-pale); }
+  .ni-blue  { background: var(--blue-pale);  }
+  .notif-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .notif-body { flex: 1; }
+  .notif-title { font-size: 11px; font-weight: 500; }
+  .notif-desc { font-size: 10px; color: var(--gray-600); margin-top: 2px; line-height: 1.4; }
+  .notif-time { font-size: 9px; color: var(--gray-400); margin-top: 2px; }
+  .unread { width: 6px; height: 6px; border-radius: 50%; background: #E24B4A; margin-top: 4px; flex-shrink: 0; }
+
+  /* ── Sign-in heatmap ─────────────────── */
+  .sign-hero-card {
+    margin: 10px 14px 8px; border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+    padding: 12px 14px; text-align: center;
+  }
+  .sh-title { font-size: 12px; font-weight: 700; color: var(--white); }
+  .sh-sub { font-size: 10px; color: rgba(255,255,255,.8); margin-top: 2px; }
+  .sh-btn {
+    display: inline-block; margin-top: 8px;
+    background: rgba(255,255,255,.2); color: var(--white);
+    border-radius: 20px; padding: 4px 14px; font-size: 10px;
+    border: 1px solid rgba(255,255,255,.35);
+  }
+  .heatmap-wrap { padding: 0 14px 10px; }
+  .hm-title { font-size: 10px; color: var(--gray-400); margin-bottom: 5px; }
+  .hm-months {
+    display: flex; justify-content: space-between; margin-bottom: 3px;
+  }
+  .hm-month { font-size: 8px; color: var(--gray-400); }
+  .hm-grid {
+    display: grid;
+    grid-template-columns: repeat(26, 1fr);
+    gap: 2px;
+  }
+  .hm-cell {
+    aspect-ratio: 1; border-radius: 1.5px;
+    background: var(--gray-200);
+  }
+  .hm-cell.s1 { background: #b7e4c7; }
+  .hm-cell.s2 { background: #52b788; }
+  .hm-cell.s3 { background: #1b7a47; }
+  .hm-cell.today { box-shadow: 0 0 0 1.5px var(--amber); }
+  .hm-legend {
+    display: flex; align-items: center; gap: 5px;
+    margin-top: 5px; justify-content: flex-end;
+  }
+  .hm-legend span { font-size: 8px; color: var(--gray-400); }
+  .hm-l { width: 8px; height: 8px; border-radius: 1.5px; }
+
+  /* ── Rank ────────────────────────────── */
+  .rank-tabs {
+    display: flex; border-bottom: 1px solid var(--gray-100);
+    background: var(--white);
+  }
+  .rtab {
+    flex: 1; text-align: center; padding: 8px 0;
+    font-size: 11px; color: var(--gray-400);
+  }
+  .rtab.active {
+    color: var(--green); font-weight: 500;
+    border-bottom: 2px solid var(--green);
+  }
+  .my-rank-bar {
+    margin: 8px 14px; background: var(--green-pale);
+    border-radius: var(--radius-sm); padding: 7px 10px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .mrb-l { font-size: 10px; color: var(--green); }
+  .mrb-r { font-size: 12px; font-weight: 700; color: var(--green); }
+  .rank-list { padding: 0 14px; }
+  .rank-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 0; border-bottom: 1px solid var(--gray-100);
+  }
+  .rnum { width: 18px; font-size: 11px; font-weight: 700; text-align: center; }
+  .rnum.g1 { color: #c9a227; }
+  .rnum.g2 { color: #888; }
+  .rnum.g3 { color: #c0724a; }
+  .ravatar {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+  }
+  .rname { flex: 1; font-size: 11px; }
+  .rbar-wrap { flex: 2; height: 6px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
+  .rbar-fill { height: 100%; border-radius: 3px; background: var(--green); }
+  .rscore { font-size: 10px; color: var(--gray-400); min-width: 30px; text-align: right; }
+
+  /* ─────────────────────────────────────────
+     ADMIN
+  ───────────────────────────────────────── */
+  .admin-frame {
+    background: var(--white); border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200); overflow: hidden;
+    box-shadow: var(--shadow-md);
+    display: flex; flex-direction: column;
+  }
+  .admin-topbar {
+    height: 48px; background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    display: flex; align-items: center;
+    padding: 0 20px; gap: 12px; flex-shrink: 0;
+  }
+  .admin-logo {
+    font-size: 13px; font-weight: 700; color: var(--green);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .logo-badge {
+    width: 22px; height: 22px; background: var(--green);
+    border-radius: 6px; display: flex; align-items: center;
+    justify-content: center;
+  }
+  .logo-badge-inner {
+    width: 10px; height: 10px; border-radius: 2px;
+    background: var(--white); opacity: .8;
+  }
+  .admin-nav-links {
+    display: flex; align-items: center; gap: 2px; margin-left: 16px;
+  }
+  .admin-nav-link {
+    font-size: 12px; padding: 5px 10px; border-radius: var(--radius-sm);
+    color: var(--gray-600); cursor: pointer;
+  }
+  .admin-nav-link.active {
+    background: var(--green-pale); color: var(--green); font-weight: 500;
+  }
+  .admin-spacer { flex: 1; }
+  .admin-user-chip {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--gray-50); border: 1px solid var(--gray-200);
+    border-radius: 20px; padding: 4px 10px 4px 5px;
+  }
+  .auser-av {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--green); display: flex; align-items: center;
+    justify-content: center; font-size: 10px; font-weight: 700; color: var(--white);
+  }
+  .auser-name { font-size: 11px; color: var(--gray-600); }
+  .admin-body {
+    display: flex; flex: 1; overflow: hidden; min-height: 360px;
+  }
+  .admin-sidebar {
+    width: 160px; background: var(--gray-50);
+    border-right: 1px solid var(--gray-200);
+    padding: 16px 10px; display: flex; flex-direction: column;
+    gap: 4px; flex-shrink: 0;
+  }
+  .sidebar-group-lbl {
+    font-size: 10px; color: var(--gray-400); padding: 8px 8px 4px;
+    letter-spacing: .05em;
+  }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+  .sidebar-item.active { background: var(--green-pale); }
+  .sidebar-item.active .si-text { color: var(--green); font-weight: 500; }
+  .si-dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+  .si-text { font-size: 12px; color: var(--gray-600); }
+  .admin-main { flex: 1; overflow: hidden; background: var(--gray-50); display: flex; flex-direction: column; }
+  .admin-content { padding: 16px 20px; flex: 1; overflow: hidden; }
+
+  /* Metrics */
+  .metrics-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; margin-bottom: 14px;
+  }
+  .metric-card {
+    background: var(--white); border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200); padding: 12px 14px;
+  }
+  .mc-label { font-size: 11px; color: var(--gray-400); }
+  .mc-value { font-size: 22px; font-weight: 700; color: var(--gray-800); margin-top: 2px; }
+  .mc-diff { font-size: 10px; margin-top: 2px; }
+  .diff-up   { color: var(--green); }
+  .diff-warn { color: var(--amber); }
+
+  /* Charts row */
+  .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
+  .chart-card {
+    background: var(--white); border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200); padding: 12px 14px;
+  }
+  .chart-title { font-size: 12px; font-weight: 500; margin-bottom: 10px; }
+  .bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
+  .bbar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .bbar-track { width: 100%; background: var(--gray-100); border-radius: 3px 3px 0 0; height: 70px; position: relative; }
+  .bbar-fill { position: absolute; bottom: 0; left: 0; right: 0; background: var(--green); border-radius: 3px 3px 0 0; }
+  .bbar-fill.today { background: var(--green-light); }
+  .bbar-lbl { font-size: 8px; color: var(--gray-400); }
+  .pie-wrap { display: flex; align-items: center; gap: 12px; }
+  .pie-legend { display: flex; flex-direction: column; gap: 5px; }
+  .pl-row { display: flex; align-items: center; gap: 6px; }
+  .pl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .pl-text { font-size: 10px; color: var(--gray-600); }
+
+  /* Table */
+  .table-card {
+    background: var(--white); border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200); overflow: hidden;
+  }
+  .table-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-bottom: 1px solid var(--gray-100);
+  }
+  .th-title { font-size: 13px; font-weight: 500; }
+  .th-actions { display: flex; gap: 8px; }
+  .th-btn {
+    font-size: 11px; padding: 4px 10px;
+    border-radius: var(--radius-sm); border: 1px solid var(--gray-200);
+    color: var(--gray-600); background: var(--white);
+  }
+  .th-btn.primary {
+    background: var(--green); border-color: var(--green);
+    color: var(--white); font-weight: 500;
+  }
+  table.data-table { width: 100%; border-collapse: collapse; }
+  .data-table th {
+    font-size: 11px; font-weight: 500; color: var(--gray-400);
+    padding: 8px 12px; background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-100); text-align: left;
+  }
+  .data-table td {
+    font-size: 11px; color: var(--gray-800); padding: 8px 12px;
+    border-bottom: 1px solid var(--gray-100); vertical-align: middle;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block; font-size: 10px;
+    padding: 2px 8px; border-radius: 4px;
+  }
+  .badge-pending { background: var(--amber-pale); color: var(--amber); }
+  .badge-ok      { background: var(--green-pale);  color: var(--green); }
+  .badge-banned  { background: var(--red-pale);    color: var(--red); }
+  .badge-normal  { background: var(--blue-pale);   color: var(--blue); }
+  .act-btn {
+    font-size: 10px; padding: 2px 8px; border-radius: 4px;
+    border: 1px solid var(--gray-200); color: var(--gray-600); margin-right: 4px;
+  }
+  .act-btn.p { border-color: var(--green); color: var(--green); }
+  .act-btn.d { border-color: var(--red);   color: var(--red); }
+  .search-row {
+    display: flex; gap: 8px; margin-bottom: 12px; align-items: center;
+  }
+  .s-input {
+    flex: 1; background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm); padding: 6px 10px; font-size: 12px;
+  }
+  .s-select {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm); padding: 6px 8px;
+    font-size: 12px; color: var(--gray-600); min-width: 90px;
+  }
+
+  /* Campus cards */
+  .campus-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .campus-card {
+    background: var(--white); border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200); padding: 12px 14px;
+  }
+  .cc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .cc-name { font-size: 13px; font-weight: 500; }
+  .cc-addr { font-size: 10px; color: var(--gray-400); margin-bottom: 8px; }
+  .cc-stats { display: flex; gap: 12px; margin-bottom: 8px; }
+  .cc-stat-n { font-size: 15px; font-weight: 700; }
+  .cc-stat-l { font-size: 9px; color: var(--gray-400); }
+  .cc-actions { display: flex; gap: 6px; padding-top: 8px; border-top: 1px solid var(--gray-100); }
+
+  /* Hbar chart */
+  .hbar-chart { display: flex; flex-direction: column; gap: 6px; padding: 4px 0; }
+  .hbar-row { display: flex; align-items: center; gap: 10px; }
+  .hbar-lbl { font-size: 11px; color: var(--gray-600); min-width: 40px; text-align: right; }
+  .hbar-track { flex: 1; height: 14px; background: var(--gray-100); border-radius: 4px; overflow: hidden; }
+  .hbar-fill { height: 100%; border-radius: 4px; background: var(--green); }
+  .hbar-fill.hi { background: var(--green-light); }
+  .hbar-val { font-size: 11px; color: var(--gray-600); min-width: 32px; }
+
+  /* Audit panel */
+  .audit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .audit-imgs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+  .aimg { height: 60px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 10px; }
+  .audit-info { display: flex; flex-direction: column; gap: 5px; }
+  .ai-row { display: flex; gap: 8px; }
+  .ai-key { font-size: 11px; color: var(--gray-400); min-width: 54px; }
+  .ai-val { font-size: 11px; color: var(--gray-800); }
+  .audit-btns { display: flex; gap: 8px; margin-top: 10px; }
+  .abtn-pass {
+    flex: 1; padding: 7px; text-align: center; border-radius: var(--radius-sm);
+    background: var(--green-pale); color: var(--green); border: 1px solid var(--green); font-size: 12px;
+  }
+  .abtn-fail {
+    flex: 1; padding: 7px; text-align: center; border-radius: var(--radius-sm);
+    background: var(--red-pale); color: var(--red); border: 1px solid var(--red); font-size: 12px;
+  }
+
+  /* Page heading inside admin */
+  .admin-page-h {
+    font-size: 16px; font-weight: 700; color: var(--gray-800); margin-bottom: 14px;
+  }
+
+  /* Wide admin frame utility */
+  .w-full { width: 100%; }
+
+  /* Pagination */
+  .pagination {
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 4px; margin-top: 10px;
+  }
+  .pg-btn {
+    font-size: 11px; padding: 3px 9px; border-radius: 4px;
+    border: 1px solid var(--gray-200); color: var(--gray-600);
+  }
+  .pg-btn.active {
+    background: var(--green); border-color: var(--green);
+    color: var(--white); font-weight: 500;
+  }
+  .pg-total { font-size: 11px; color: var(--gray-400); margin-right: 6px; }
+
+  /* Gift table */
+  .gift-card {
+    background: var(--white); border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200); padding: 10px 12px;
+    display: flex; gap: 10px; align-items: center; margin-bottom: 8px;
+  }
+  .gift-thumb {
+    width: 44px; height: 44px; border-radius: var(--radius-sm);
+    flex-shrink: 0; display: flex; align-items: center;
+    justify-content: center; font-size: 10px;
+  }
+  .gift-info { flex: 1; }
+  .gift-name { font-size: 12px; font-weight: 500; }
+  .gift-meta { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
+  .gift-actions { display: flex; gap: 6px; }
+
+  /* Login */
+  .login-page {
+    min-height: 400px; display: flex; align-items: center;
+    justify-content: center; background: var(--gray-50); padding: 24px;
+  }
+  .login-card {
+    background: var(--white); border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200); padding: 32px;
+    width: 100%; max-width: 320px; box-shadow: var(--shadow-md);
+  }
+  .login-logo {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 24px;
+  }
+  .login-logo-badge {
+    width: 32px; height: 32px; background: var(--green);
+    border-radius: 10px; display: flex; align-items: center;
+    justify-content: center;
+  }
+  .login-logo-inner {
+    width: 14px; height: 14px; border-radius: 3px;
+    background: var(--white); opacity: .9;
+  }
+  .login-title { font-size: 16px; font-weight: 700; }
+  .login-sub { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+  .login-field { margin-bottom: 14px; }
+  .login-label { font-size: 12px; color: var(--gray-600); margin-bottom: 5px; }
+  .login-input {
+    width: 100%; background: var(--gray-50);
+    border: 1px solid var(--gray-200); border-radius: var(--radius-sm);
+    padding: 8px 12px; font-size: 13px; color: var(--gray-800);
+  }
+  .login-btn {
+    width: 100%; background: var(--green); color: var(--white);
+    border: none; border-radius: var(--radius-md); padding: 10px;
+    font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 4px;
+  }
+
+  /* Title banner */
+  .title-banner {
+    background: var(--green); color: var(--white);
+    padding: 32px 32px 28px; text-align: center; margin-bottom: 0;
+  }
+  .tb-title { font-size: 28px; font-weight: 700; letter-spacing: -.5px; }
+  .tb-sub { font-size: 14px; opacity: .75; margin-top: 6px; }
+  .tb-chips {
+    display: flex; gap: 8px; justify-content: center; margin-top: 16px;
+  }
+  .tb-chip {
+    font-size: 11px; padding: 4px 12px; border-radius: 20px;
+    background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+    color: var(--white);
+  }
+</style>
+</head>
+<body>
+
+<!-- ████  BANNER  ████ -->
+<div class="title-banner">
+  <div class="tb-title">校园二手衣物回收系统</div>
+  <div class="tb-sub">原型图 — 用户端（手机适配）& 管理后台</div>
+  <div class="tb-chips">
+    <span class="tb-chip">Vue 3</span>
+    <span class="tb-chip">SpringBoot</span>
+    <span class="tb-chip">Redis Bitmap</span>
+    <span class="tb-chip">Redis ZSet</span>
+    <span class="tb-chip">MinIO</span>
+    <span class="tb-chip">Sa-Token</span>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- ══════════════════════════════════════
+     SECTION 1: 用户端 — 浏览 & 发布 & 详情
+══════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">用户端</div>
+    <div class="section-badge">手机适配 Web</div>
+    <div class="section-line"></div>
+    <span style="font-size:12px;color:var(--gray-400);">浏览 / 发布 / 详情</span>
+  </div>
+  <div class="frames-row">
+
+    <!-- 首页 -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"><div class="notch-bar"></div></div>
+          <div class="app-topbar">
+            <div class="app-title">衣物广场</div>
+            <div style="display:flex;gap:6px;">
+              <div class="icon-btn"><div style="width:10px;height:10px;border-radius:50%;border:1.5px solid var(--gray-400);"></div></div>
+              <div class="icon-btn"><div style="width:10px;height:1.5px;background:var(--gray-400);box-shadow:0 3px 0 var(--gray-400),0 6px 0 var(--gray-400);margin-top:2px;"></div></div>
+            </div>
+          </div>
+          <div class="app-content">
+            <div class="search-bar"><div class="search-circle"></div>搜索衣物品类、尺码…</div>
+            <div class="chips">
+              <div class="chip active">全部</div>
+              <div class="chip">上装</div>
+              <div class="chip">下装</div>
+              <div class="chip">外套</div>
+            </div>
+            <div class="grid-2">
+              <div class="item-card">
+                <div class="item-thumb t-green">封面图</div>
+                <div class="item-info">
+                  <div class="item-name">白色T恤 M码</div>
+                  <div class="item-meta">九成新 · 东区</div>
+                  <div class="item-tag tag-free">免费领取</div>
+                </div>
+              </div>
+              <div class="item-card">
+                <div class="item-thumb t-amber">封面图</div>
+                <div class="item-info">
+                  <div class="item-name">牛仔外套 L码</div>
+                  <div class="item-meta">八成新 · 西区</div>
+                  <div class="item-tag tag-pts">80 积分</div>
+                </div>
+              </div>
+              <div class="item-card">
+                <div class="item-thumb t-blue">封面图</div>
+                <div class="item-info">
+                  <div class="item-name">运动裤 L码</div>
+                  <div class="item-meta">九成新 · 东区</div>
+                  <div class="item-tag tag-free">免费领取</div>
+                </div>
+              </div>
+              <div class="item-card">
+                <div class="item-thumb t-gray">封面图</div>
+                <div class="item-info">
+                  <div class="item-name">连衣裙 S码</div>
+                  <div class="item-meta">八成新 · 南区</div>
+                  <div class="item-tag tag-pts">60 积分</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-bar">
+            <div class="tab-item"><div class="tab-icon active"></div><div class="tab-text active">广场</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">发布</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">消息</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">我的</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-label">首页 / 物品广场</div>
+    </div>
+
+    <!-- 发布 -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"><div class="notch-bar"></div></div>
+          <div class="app-topbar"><div class="app-title">发布衣物</div></div>
+          <div class="app-content">
+            <div class="form-area">
+              <div>
+                <div class="upload-zone">
+                  <div class="upload-plus">+</div>
+                  <div class="upload-text">上传图片（最多 6 张）</div>
+                </div>
+              </div>
+              <div>
+                <div class="f-label">物品名称</div>
+                <div class="f-input" style="color:var(--gray-400);">请输入名称</div>
+              </div>
+              <div>
+                <div class="f-label">品类</div>
+                <div class="radio-row">
+                  <div class="radio-btn sel">上装</div>
+                  <div class="radio-btn">下装</div>
+                  <div class="radio-btn">外套</div>
+                </div>
+              </div>
+              <div>
+                <div class="f-label">尺码 / 性别</div>
+                <div class="radio-row">
+                  <div class="radio-btn">M</div>
+                  <div class="radio-btn sel">L</div>
+                  <div class="radio-btn">XL</div>
+                  <div class="radio-btn">通用</div>
+                </div>
+              </div>
+              <div>
+                <div class="f-label">新旧程度</div>
+                <div class="radio-row">
+                  <div class="radio-btn sel">九成新</div>
+                  <div class="radio-btn">八成新</div>
+                  <div class="radio-btn">其他</div>
+                </div>
+              </div>
+              <div>
+                <div class="f-label">获取方式</div>
+                <div class="radio-row">
+                  <div class="radio-btn sel">免费领取</div>
+                  <div class="radio-btn">积分兑换</div>
+                </div>
+              </div>
+              <div>
+                <div class="f-label">物品描述</div>
+                <div class="f-input" style="color:var(--gray-400);height:40px;">描述物品情况…</div>
+              </div>
+            </div>
+            <div class="submit-btn">提交审核</div>
+          </div>
+          <div class="tab-bar">
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">广场</div></div>
+            <div class="tab-item"><div class="tab-icon active"></div><div class="tab-text active">发布</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">消息</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">我的</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-label">发布物品</div>
+    </div>
+
+    <!-- 物品详情 -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"><div class="notch-bar"></div></div>
+          <div class="app-topbar">
+            <span style="font-size:12px;color:var(--green);">← 返回</span>
+            <div class="app-title">物品详情</div>
+            <div style="width:36px;"></div>
+          </div>
+          <div class="detail-hero t-green">封面图片</div>
+          <div class="detail-body">
+            <div class="detail-title">白色棉质T恤 M码</div>
+            <div class="dtags">
+              <div class="dtag">上装</div>
+              <div class="dtag">M码</div>
+              <div class="dtag">九成新</div>
+              <div class="dtag">男款</div>
+            </div>
+            <div class="detail-desc">穿过两次，已洗涤干净，无污渍破损，保存状态良好，欢迎有需要的同学领取。</div>
+            <div style="margin-top:8px;font-size:12px;font-weight:700;color:var(--green);">免费领取</div>
+          </div>
+          <div class="owner-row">
+            <div class="avatar-sm">张</div>
+            <div class="owner-info">
+              <div class="name">张同学</div>
+              <div class="dept">东区 · 信息学院</div>
+            </div>
+          </div>
+          <div class="action-row">
+            <div class="btn-fav">♡ 收藏</div>
+            <div class="btn-claim">申请认领</div>
+          </div>
+          <div class="tab-bar">
+            <div class="tab-item"><div class="tab-icon active"></div><div class="tab-text active">广场</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">发布</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">消息</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">我的</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-label">物品详情</div>
+    </div>
+
+    <!-- 个人中心 -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"><div class="notch-bar"></div></div>
+          <div class="profile-hero">
+            <div class="avatar-lg">李</div>
+            <div class="profile-info">
+              <div class="pname">李同学</div>
+              <div class="psub">西区 · 商学院 · 2022 级</div>
+            </div>
+          </div>
+          <div class="stat-strip">
+            <div class="stat-cell"><div class="stat-num">12</div><div class="stat-lbl">捐赠件</div></div>
+            <div class="stat-cell"><div class="stat-num">8</div><div class="stat-lbl">领取件</div></div>
+            <div class="stat-cell"><div class="stat-num">320</div><div class="stat-lbl">积分</div></div>
+          </div>
+          <div class="menu-list">
+            <div class="menu-row"><div class="menu-left"><div class="menu-dot" style="background:var(--green-pale);border:1px solid var(--green-mid);"></div><div class="menu-text">我发布的</div></div><div class="menu-arrow">›</div></div>
+            <div class="menu-row"><div class="menu-left"><div class="menu-dot" style="background:var(--amber-pale);border:1px solid #f5d99e;"></div><div class="menu-text">我的订单</div></div><div class="menu-arrow">›</div></div>
+            <div class="menu-row"><div class="menu-left"><div class="menu-dot" style="background:var(--blue-pale);border:1px solid #b3d4f7;"></div><div class="menu-text">我的收藏</div></div><div class="menu-arrow">›</div></div>
+            <div class="menu-row"><div class="menu-left"><div class="menu-dot" style="background:var(--green-pale);border:1px solid var(--green-mid);"></div><div class="menu-text">积分明细</div></div><div class="menu-arrow">›</div></div>
+            <div class="menu-row"><div class="menu-left"><div class="menu-dot" style="background:#E8F5EE;border:1px solid var(--green-mid);"></div><div class="menu-text">每日签到</div></div><div class="menu-arrow">›</div></div>
+            <div class="menu-row"><div class="menu-left"><div class="menu-dot" style="background:var(--amber-pale);border:1px solid #f5d99e;"></div><div class="menu-text">排行榜</div></div><div class="menu-arrow">›</div></div>
+          </div>
+          <div class="tab-bar" style="margin-top:auto;">
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">广场</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">发布</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">消息</div></div>
+            <div class="tab-item"><div class="tab-icon active"></div><div class="tab-text active">我的</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-label">个人中心</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SECTION 2: 用户端 — 订单 & 消息 & 签到 & 排行
+══════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">用户端</div>
+    <div class="section-badge">手机适配 Web</div>
+    <div class="section-line"></div>
+    <span style="font-size:12px;color:var(--gray-400);">订单 / 消息 / 签到热力图 / 排行榜</span>
+  </div>
+  <div class="frames-row">
+
+    <!-- 订单 -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"><div class="notch-bar"></div></div>
+          <div class="app-topbar">
+            <span style="font-size:12px;color:var(--green);">← 返回</span>
+            <div class="app-title">我的订单</div>
+            <div style="width:36px;"></div>
+          </div>
+          <div class="app-content">
+            <div class="seg-ctrl">
+              <div class="seg-btn active">我发起的</div>
+              <div class="seg-btn">我收到的</div>
+            </div>
+            <div class="order-card">
+              <div class="order-top">
+                <div class="order-thumb t-green"></div>
+                <div>
+                  <div class="order-name">白色T恤 M码</div>
+                  <div class="order-meta">免费领取 · 东区</div>
+                  <div class="status-pill s-pending">待确认</div>
+                </div>
+              </div>
+              <div class="order-actions">
+                <div class="oa-btn">取消申请</div>
+              </div>
+            </div>
+            <div class="order-card">
+              <div class="order-top">
+                <div class="order-thumb t-amber"></div>
+                <div>
+                  <div class="order-name">牛仔外套 L码</div>
+                  <div class="order-meta">80 积分 · 西区</div>
+                  <div class="status-pill s-ok">待交接</div>
+                </div>
+              </div>
+              <div class="order-actions">
+                <div class="oa-btn primary">确认完成</div>
+                <div class="oa-btn">取消</div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-bar">
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">广场</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">发布</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">消息</div></div>
+            <div class="tab-item"><div class="tab-icon active"></div><div class="tab-text active">我的</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-label">我的订单</div>
+    </div>
+
+    <!-- 消息 -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"><div class="notch-bar"></div></div>
+          <div class="app-topbar">
+            <div class="app-title">消息通知</div>
+            <span style="font-size:11px;color:var(--green);">全部已读</span>
+          </div>
+          <div class="app-content">
+            <div class="notif-item">
+              <div class="notif-icon ni-green"><div class="notif-dot" style="background:var(--green);"></div></div>
+              <div class="notif-body">
+                <div class="notif-title">审核通过</div>
+                <div class="notif-desc">「白色T恤 M码」已通过审核，现已上架</div>
+                <div class="notif-time">10 分钟前</div>
+              </div>
+              <div class="unread"></div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-icon ni-amber"><div class="notif-dot" style="background:var(--amber);"></div></div>
+              <div class="notif-body">
+                <div class="notif-title">有人申请认领</div>
+                <div class="notif-desc">李同学申请认领您的「牛仔外套 L码」</div>
+                <div class="notif-time">1 小时前</div>
+              </div>
+              <div class="unread"></div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-icon ni-blue"><div class="notif-dot" style="background:var(--blue);"></div></div>
+              <div class="notif-body">
+                <div class="notif-title">积分到账</div>
+                <div class="notif-desc">成功捐赠奖励 +30 积分，余额 320 分</div>
+                <div class="notif-time">昨天</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-icon ni-green"><div class="notif-dot" style="background:var(--green);"></div></div>
+              <div class="notif-body">
+                <div class="notif-title">订单已完成</div>
+                <div class="notif-desc">「运动裤 L码」已完成交接，感谢参与</div>
+                <div class="notif-time">3 天前</div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-bar">
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">广场</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">发布</div></div>
+            <div class="tab-item"><div class="tab-icon active"></div><div class="tab-text active">消息</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">我的</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-label">消息通知</div>
+    </div>
+
+    <!-- 签到 -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"><div class="notch-bar"></div></div>
+          <div class="app-topbar">
+            <span style="font-size:12px;color:var(--green);">← 返回</span>
+            <div class="app-title">每日签到</div>
+            <div style="width:36px;"></div>
+          </div>
+          <div class="app-content">
+            <div class="sign-hero-card">
+              <div class="sh-title">今日已签到 ✓</div>
+              <div class="sh-sub">连续签到 12 天 · 今日奖励 +10 积分</div>
+              <div class="sh-btn">已签到</div>
+            </div>
+            <div class="heatmap-wrap">
+              <div class="hm-title">2026 年签到热力图</div>
+              <div class="hm-months">
+                <span class="hm-month">1月</span>
+                <span class="hm-month">3月</span>
+                <span class="hm-month">5月</span>
+                <span class="hm-month">7月</span>
+                <span class="hm-month">9月</span>
+                <span class="hm-month">11月</span>
+              </div>
+              <div class="hm-grid" id="heatmap"></div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;align-items:center;">
+                <span style="font-size:10px;color:var(--gray-400);">已签到 <strong style="color:var(--gray-800);">58</strong> 天 · 连续 <strong style="color:var(--gray-800);">12</strong> 天</span>
+                <div class="hm-legend">
+                  <span>少</span>
+                  <div class="hm-l" style="background:var(--gray-200);"></div>
+                  <div class="hm-l" style="background:#b7e4c7;"></div>
+                  <div class="hm-l" style="background:#52b788;"></div>
+                  <div class="hm-l" style="background:#1b7a47;"></div>
+                  <span>多</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-bar">
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">广场</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">发布</div></div>
+            <div class="tab-item"><div class="tab-icon"></div><div class="tab-text">消息</div></div>
+            <div class="tab-item"><div class="tab-icon active"></div><div class="tab-text active">我的</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-label">签到 / 年度热力图</div>
+    </div>
+
+    <!-- 排行榜 -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"><div class="notch-bar"></div></div>
+          <div class="app-topbar">
+            <span style="font-size:12px;color:var(--green);">← 返回</span>
+            <div class="app-title">排行榜</div>
+            <div style="width:36px;"></div>
+          </div>
+          <div class="rank-tabs">
+            <div class="rtab active">积分榜</div>
+            <div class="rtab">捐赠榜</div>
+            <div class="rtab">校区榜</div>
+          </div>
+          <div class="my-rank-bar">
+            <div class="mrb-l">我的排名</div>
+            <div class="mrb-r">第 38 名 · 320 分</div>
+          </div>
+          <div class="rank-list">
+            <div class="rank-row">
+              <div class="rnum g1">1</div>
+              <div class="ravatar" style="background:#fff8e1;color:#c9a227;">张</div>
+              <div class="rname">张同学</div>
+              <div class="rbar-wrap"><div class="rbar-fill" style="width:100%;background:#c9a227;"></div></div>
+              <div class="rscore">980</div>
+            </div>
+            <div class="rank-row">
+              <div class="rnum g2">2</div>
+              <div class="ravatar" style="background:var(--green-pale);color:var(--green);">李</div>
+              <div class="rname">李同学</div>
+              <div class="rbar-wrap"><div class="rbar-fill" style="width:89%;"></div></div>
+              <div class="rscore">876</div>
+            </div>
+            <div class="rank-row">
+              <div class="rnum g3">3</div>
+              <div class="ravatar" style="background:#fde8de;color:#c0724a;">王</div>
+              <div class="rname">王同学</div>
+              <div class="rbar-wrap"><div class="rbar-fill" style="width:82%;"></div></div>
+              <div class="rscore">801</div>
+            </div>
+            <div class="rank-row">
+              <div class="rnum" style="color:var(--gray-400);">4</div>
+              <div class="ravatar" style="background:var(--blue-pale);color:var(--blue);">赵</div>
+              <div class="rname">赵同学</div>
+              <div class="rbar-wrap"><div class="rbar-fill" style="width:77%;"></div></div>
+              <div class="rscore">756</div>
+            </div>
+            <div class="rank-row">
+              <div class="rnum" style="color:var(--gray-400);">5</div>
+              <div class="ravatar" style="background:var(--amber-pale);color:var(--amber);">陈</div>
+              <div class="rname">陈同学</div>
+              <div class="rbar-wrap"><div class="rbar-fill" style="width:70%;"></div></div>
+              <div class="rscore">688</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-label">排行榜</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     SECTION 3: 管理后台 — 登录 & 数据看板
+══════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">管理后台</div>
+    <div class="section-badge">Web 端</div>
+    <div class="section-line"></div>
+    <span style="font-size:12px;color:var(--gray-400);">登录 / 数据看板</span>
+  </div>
+
+  <div class="frames-row" style="align-items:stretch;">
+
+    <!-- 登录 -->
+    <div class="frame-wrap" style="align-self:flex-start;">
+      <div style="width:320px;">
+        <div class="login-page" style="border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow-md);background:var(--gray-50);">
+          <div class="login-card">
+            <div class="login-logo">
+              <div class="login-logo-badge"><div class="login-logo-inner"></div></div>
+              <div>
+                <div class="login-title">管理后台</div>
+                <div class="login-sub">校园二手衣物回收系统</div>
+              </div>
+            </div>
+            <div class="login-field">
+              <div class="login-label">手机号</div>
+              <div class="login-input" style="color:var(--gray-400);">请输入手机号</div>
+            </div>
+            <div class="login-field">
+              <div class="login-label">密码</div>
+              <div class="login-input" style="color:var(--gray-400);">请输入密码</div>
+            </div>
+            <div class="login-btn">登 录</div>
+            <div style="text-align:center;font-size:11px;color:var(--gray-400);margin-top:14px;">
+              超级管理员 / 校区管理员 共用登录
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-label">管理员登录</div>
+    </div>
+
+    <!-- 数据看板 -->
+    <div class="frame-wrap" style="flex:1;min-width:0;">
+      <div class="admin-frame w-full">
+        <div class="admin-topbar">
+          <div class="admin-logo">
+            <div class="logo-badge"><div class="logo-badge-inner"></div></div>
+            校园二手衣物回收
+          </div>
+          <div class="admin-nav-links">
+            <div class="admin-nav-link active">数据看板</div>
+            <div class="admin-nav-link">物品管理</div>
+            <div class="admin-nav-link">用户管理</div>
+            <div class="admin-nav-link">回收点</div>
+            <div class="admin-nav-link">积分礼品</div>
+          </div>
+          <div class="admin-spacer"></div>
+          <div class="admin-user-chip">
+            <div class="auser-av">管</div>
+            <div class="auser-name">东区管理员</div>
+          </div>
+        </div>
+        <div class="admin-body">
+          <div class="admin-sidebar">
+            <div class="sidebar-group-lbl">概览</div>
+            <div class="sidebar-item active"><div class="si-dot" style="background:var(--green);"></div><div class="si-text">数据看板</div></div>
+            <div class="sidebar-group-lbl">内容管理</div>
+            <div class="sidebar-item"><div class="si-dot" style="background:var(--amber);"></div><div class="si-text">物品审核</div></div>
+            <div class="sidebar-item"><div class="si-dot" style="background:#52b788;"></div><div class="si-text">回收点管理</div></div>
+            <div class="sidebar-group-lbl">用户管理</div>
+            <div class="sidebar-item"><div class="si-dot" style="background:var(--blue);"></div><div class="si-text">用户列表</div></div>
+            <div class="sidebar-item"><div class="si-dot" style="background:#e07b54;"></div><div class="si-text">积分礼品</div></div>
+          </div>
+          <div class="admin-main">
+            <div class="admin-content">
+              <div class="admin-page-h">数据看板</div>
+              <div class="metrics-row">
+                <div class="metric-card"><div class="mc-label">本校区用户</div><div class="mc-value">1,284</div><div class="mc-diff diff-up">↑ 今日 +12</div></div>
+                <div class="metric-card"><div class="mc-label">待审核物品</div><div class="mc-value" style="color:var(--amber);">8</div><div class="mc-diff diff-warn">需及时处理</div></div>
+                <div class="metric-card"><div class="mc-label">本月成交</div><div class="mc-value">236</div><div class="mc-diff diff-up">↑ +18% 较上月</div></div>
+                <div class="metric-card"><div class="mc-label">上架物品</div><div class="mc-value">142</div><div class="mc-diff diff-up">↑ 本周 +24</div></div>
+              </div>
+              <div class="charts-row">
+                <div class="chart-card">
+                  <div class="chart-title">近 7 天成交趋势</div>
+                  <div class="bar-chart">
+                    <div class="bbar-wrap"><div class="bbar-track"><div class="bbar-fill" style="height:50%;"></div></div><div class="bbar-lbl">3/12</div></div>
+                    <div class="bbar-wrap"><div class="bbar-track"><div class="bbar-fill" style="height:65%;"></div></div><div class="bbar-lbl">3/13</div></div>
+                    <div class="bbar-wrap"><div class="bbar-track"><div class="bbar-fill" style="height:40%;"></div></div><div class="bbar-lbl">3/14</div></div>
+                    <div class="bbar-wrap"><div class="bbar-track"><div class="bbar-fill" style="height:82%;"></div></div><div class="bbar-lbl">3/15</div></div>
+                    <div class="bbar-wrap"><div class="bbar-track"><div class="bbar-fill" style="height:55%;"></div></div><div class="bbar-lbl">3/16</div></div>
+                    <div class="bbar-wrap"><div class="bbar-track"><div class="bbar-fill" style="height:90%;"></div></div><div class="bbar-lbl">3/17</div></div>
+                    <div class="bbar-wrap"><div class="bbar-track"><div class="bbar-fill today" style="height:72%;"></div></div><div class="bbar-lbl" style="color:var(--green);font-weight:500;">今天</div></div>
+                  </div>
+                </div>
+                <div class="chart-card">
+                  <div class="chart-title">品类分布</div>
+                  <div class="pie-wrap">
+                    <svg width="72" height="72" viewBox="0 0 72 72">
+                      <circle cx="36" cy="36" r="28" fill="none" stroke="#e8e8e8" stroke-width="14"/>
+                      <circle cx="36" cy="36" r="28" fill="none" stroke="#2E7D52" stroke-width="14" stroke-dasharray="73.8 102.2" stroke-dashoffset="0" transform="rotate(-90 36 36)"/>
+                      <circle cx="36" cy="36" r="28" fill="none" stroke="#4CAF7D" stroke-width="14" stroke-dasharray="49.3 126.7" stroke-dashoffset="-73.8" transform="rotate(-90 36 36)"/>
+                      <circle cx="36" cy="36" r="28" fill="none" stroke="#D4870A" stroke-width="14" stroke-dasharray="25.1 150.9" stroke-dashoffset="-123.1" transform="rotate(-90 36 36)"/>
+                      <circle cx="36" cy="36" r="28" fill="none" stroke="#e8e8e8" stroke-width="14" stroke-dasharray="28.4 147.6" stroke-dashoffset="-148.2" transform="rotate(-90 36 36)"/>
+                    </svg>
+                    <div class="pie-legend">
+                      <div class="pl-row"><div class="pl-dot" style="background:#2E7D52;"></div><div class="pl-text">上装 42%</div></div>
+                      <div class="pl-row"><div class="pl-dot" style="background:#4CAF7D;"></div><div class="pl-text">外套 28%</div></div>
+                      <div class="pl-row"><div class="pl-dot" style="background:#D4870A;"></div><div class="pl-text">下装 14%</div></div>
+                      <div class="pl-row"><div class="pl-dot" style="background:#e8e8e8;border:1px solid #ddd;"></div><div class="pl-text">其他 16%</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-label">数据看板（校区管理员）</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     SECTION 4: 管理后台 — 物品审核 & 用户管理
+══════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">管理后台</div>
+    <div class="section-badge">Web 端</div>
+    <div class="section-line"></div>
+    <span style="font-size:12px;color:var(--gray-400);">物品审核 / 用户管理</span>
+  </div>
+
+  <!-- 物品审核 -->
+  <div style="margin-bottom:20px;">
+    <div class="admin-frame w-full">
+      <div class="admin-topbar">
+        <div class="admin-logo"><div class="logo-badge"><div class="logo-badge-inner"></div></div>校园二手衣物回收</div>
+        <div class="admin-spacer"></div>
+        <div class="admin-user-chip"><div class="auser-av">管</div><div class="auser-name">东区管理员</div></div>
+      </div>
+      <div class="admin-body">
+        <div class="admin-sidebar">
+          <div class="sidebar-group-lbl">概览</div>
+          <div class="sidebar-item"><div class="si-dot" style="background:var(--green);"></div><div class="si-text">数据看板</div></div>
+          <div class="sidebar-group-lbl">内容管理</div>
+          <div class="sidebar-item active"><div class="si-dot" style="background:var(--amber);"></div><div class="si-text">物品审核</div></div>
+          <div class="sidebar-item"><div class="si-dot" style="background:#52b788;"></div><div class="si-text">回收点管理</div></div>
+          <div class="sidebar-group-lbl">用户管理</div>
+          <div class="sidebar-item"><div class="si-dot" style="background:var(--blue);"></div><div class="si-text">用户列表</div></div>
+          <div class="sidebar-item"><div class="si-dot" style="background:#e07b54;"></div><div class="si-text">积分礼品</div></div>
+        </div>
+        <div class="admin-main">
+          <div class="admin-content">
+            <div class="admin-page-h">物品审核</div>
+            <div class="search-row">
+              <input class="s-input" placeholder="搜索物品名称…" />
+              <select class="s-select"><option>全部状态</option><option>待审核</option><option>已通过</option><option>已拒绝</option></select>
+              <select class="s-select"><option>全部品类</option><option>上装</option><option>外套</option></select>
+              <button class="th-btn primary">搜索</button>
+              <button class="th-btn">批量通过</button>
+            </div>
+            <div class="audit-grid">
+              <div class="table-card">
+                <table class="data-table" style="width:100%;">
+                  <thead><tr><th><input type="checkbox" /></th><th>物品</th><th>发布者</th><th>状态</th><th>操作</th></tr></thead>
+                  <tbody>
+                    <tr><td><input type="checkbox" /></td><td><div style="font-size:11px;font-weight:500;">白色T恤 M码</div><div style="font-size:10px;color:var(--gray-400);">上装 · 免费</div></td><td>张同学</td><td><span class="badge badge-pending">待审核</span></td><td><span class="act-btn p">查看</span></td></tr>
+                    <tr><td><input type="checkbox" /></td><td><div style="font-size:11px;font-weight:500;">牛仔外套 L</div><div style="font-size:10px;color:var(--gray-400);">外套 · 80分</div></td><td>李同学</td><td><span class="badge badge-pending">待审核</span></td><td><span class="act-btn p">查看</span></td></tr>
+                    <tr><td><input type="checkbox" /></td><td><div style="font-size:11px;font-weight:500;">运动裤 M码</div><div style="font-size:10px;color:var(--gray-400);">下装 · 免费</div></td><td>王同学</td><td><span class="badge badge-ok">已通过</span></td><td><span class="act-btn d">下架</span></td></tr>
+                    <tr><td><input type="checkbox" /></td><td><div style="font-size:11px;font-weight:500;">连衣裙 S码</div><div style="font-size:10px;color:var(--gray-400);">上装 · 60分</div></td><td>赵同学</td><td><span class="badge badge-pending">待审核</span></td><td><span class="act-btn p">查看</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="chart-card">
+                <div class="chart-title">审核详情 — 白色T恤 M码</div>
+                <div class="audit-imgs-grid">
+                  <div class="aimg t-green">图片 1</div>
+                  <div class="aimg t-amber">图片 2</div>
+                </div>
+                <div class="audit-info">
+                  <div class="ai-row"><div class="ai-key">发布者</div><div class="ai-val">张同学 · 东区</div></div>
+                  <div class="ai-row"><div class="ai-key">品类</div><div class="ai-val">上装 / M码 / 男款</div></div>
+                  <div class="ai-row"><div class="ai-key">新旧程度</div><div class="ai-val">九成新</div></div>
+                  <div class="ai-row"><div class="ai-key">获取方式</div><div class="ai-val">免费领取</div></div>
+                  <div class="ai-row"><div class="ai-key">描述</div><div class="ai-val" style="line-height:1.4;">棉质T恤，仅穿2次，无破损污渍…</div></div>
+                </div>
+                <div class="audit-btns">
+                  <div class="abtn-pass">通过</div>
+                  <div class="abtn-fail">拒绝</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 用户管理 -->
+  <div>
+    <div class="admin-frame w-full">
+      <div class="admin-topbar">
+        <div class="admin-logo"><div class="logo-badge"><div class="logo-badge-inner"></div></div>校园二手衣物回收</div>
+        <div class="admin-spacer"></div>
+        <div class="admin-user-chip"><div class="auser-av">管</div><div class="auser-name">东区管理员</div></div>
+      </div>
+      <div class="admin-body">
+        <div class="admin-sidebar">
+          <div class="sidebar-group-lbl">概览</div>
+          <div class="sidebar-item"><div class="si-dot" style="background:var(--green);"></div><div class="si-text">数据看板</div></div>
+          <div class="sidebar-group-lbl">内容管理</div>
+          <div class="sidebar-item"><div class="si-dot" style="background:var(--amber);"></div><div class="si-text">物品审核</div></div>
+          <div class="sidebar-item"><div class="si-dot" style="background:#52b788;"></div><div class="si-text">回收点管理</div></div>
+          <div class="sidebar-group-lbl">用户管理</div>
+          <div class="sidebar-item active"><div class="si-dot" style="background:var(--blue);"></div><div class="si-text">用户列表</div></div>
+          <div class="sidebar-item"><div class="si-dot" style="background:#e07b54;"></div><div class="si-text">积分礼品</div></div>
+        </div>
+        <div class="admin-main">
+          <div class="admin-content">
+            <div class="admin-page-h">用户管理</div>
+            <div class="search-row">
+              <input class="s-input" placeholder="搜索姓名、学号、手机号…" />
+              <select class="s-select"><option>全部状态</option><option>正常</option><option>封禁</option></select>
+              <button class="th-btn primary">搜索</button>
+            </div>
+            <div class="table-card">
+              <table class="data-table" style="width:100%;">
+                <thead><tr><th>用户</th><th>学号</th><th>手机</th><th>积分</th><th>捐赠</th><th>状态</th><th>注册时间</th><th>操作</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><div style="display:flex;align-items:center;gap:7px;"><div class="avatar-sm" style="background:var(--green-pale);color:var(--green);width:26px;height:26px;">张</div>张同学</div></td>
+                    <td>20221001</td><td>138****8888</td><td><strong>980</strong></td><td>15 件</td>
+                    <td><span class="badge badge-normal">正常</span></td><td style="color:var(--gray-400);">2022-09-01</td>
+                    <td><span class="act-btn p">详情</span><span class="act-btn">调积分</span><span class="act-btn d">封禁</span></td>
+                  </tr>
+                  <tr>
+                    <td><div style="display:flex;align-items:center;gap:7px;"><div class="avatar-sm" style="background:var(--amber-pale);color:var(--amber);width:26px;height:26px;">李</div>李同学</div></td>
+                    <td>20221088</td><td>139****6666</td><td><strong>320</strong></td><td>8 件</td>
+                    <td><span class="badge badge-normal">正常</span></td><td style="color:var(--gray-400);">2022-09-02</td>
+                    <td><span class="act-btn p">详情</span><span class="act-btn">调积分</span><span class="act-btn d">封禁</span></td>
+                  </tr>
+                  <tr>
+                    <td><div style="display:flex;align-items:center;gap:7px;"><div class="avatar-sm" style="background:var(--red-pale);color:var(--red);width:26px;height:26px;">王</div>王同学</div></td>
+                    <td>20221233</td><td>137****1111</td><td><strong>0</strong></td><td>2 件</td>
+                    <td><span class="badge badge-banned">已封禁</span></td><td style="color:var(--gray-400);">2022-09-05</td>
+                    <td><span class="act-btn p">详情</span><span class="act-btn" style="color:var(--green);border-color:var(--green);">解封</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination">
+              <span class="pg-total">共 1284 条</span>
+              <div class="pg-btn">上一页</div>
+              <div class="pg-btn active">1</div>
+              <div class="pg-btn">2</div>
+              <div class="pg-btn">3</div>
+              <div class="pg-btn">下一页</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     SECTION 5: 超级管理员 — 校区管理
+══════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">超级管理员</div>
+    <div class="section-badge" style="background:#fff3dc;color:var(--amber);border-color:#f5d99e;">仅 SUPER_ADMIN</div>
+    <div class="section-line"></div>
+    <span style="font-size:12px;color:var(--gray-400);">校区管理 / 管理员账号</span>
+  </div>
+  <div class="admin-frame w-full">
+    <div class="admin-topbar">
+      <div class="admin-logo"><div class="logo-badge"><div class="logo-badge-inner"></div></div>校园二手衣物回收</div>
+      <div class="admin-nav-links">
+        <div class="admin-nav-link active">校区管理</div>
+        <div class="admin-nav-link">管理员账号</div>
+        <div class="admin-nav-link">全平台看板</div>
+        <div class="admin-nav-link">物品管理</div>
+        <div class="admin-nav-link">用户管理</div>
+      </div>
+      <div class="admin-spacer"></div>
+      <div class="admin-user-chip">
+        <div class="auser-av" style="background:var(--amber);color:var(--white);">超</div>
+        <div class="auser-name">Super Admin</div>
+      </div>
+    </div>
+    <div class="admin-body">
+      <div class="admin-sidebar">
+        <div class="sidebar-group-lbl">系统管理</div>
+        <div class="sidebar-item active"><div class="si-dot" style="background:var(--amber);"></div><div class="si-text">校区管理</div></div>
+        <div class="sidebar-item"><div class="si-dot" style="background:#e07b54;"></div><div class="si-text">管理员账号</div></div>
+        <div class="sidebar-group-lbl">数据</div>
+        <div class="sidebar-item"><div class="si-dot" style="background:var(--green);"></div><div class="si-text">全平台看板</div></div>
+        <div class="sidebar-group-lbl">内容</div>
+        <div class="sidebar-item"><div class="si-dot" style="background:var(--blue);"></div><div class="si-text">物品管理</div></div>
+        <div class="sidebar-item"><div class="si-dot" style="background:#52b788;"></div><div class="si-text">用户管理</div></div>
+      </div>
+      <div class="admin-main">
+        <div class="admin-content">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <div class="admin-page-h" style="margin-bottom:0;">校区管理</div>
+            <button class="th-btn primary">+ 新增校区</button>
+          </div>
+          <div class="campus-grid" style="margin-bottom:16px;">
+            <div class="campus-card">
+              <div class="cc-header">
+                <div class="cc-name">东区校园</div>
+                <span class="badge badge-ok">启用</span>
+              </div>
+              <div class="cc-addr">东校区主楼 A 栋旁</div>
+              <div class="cc-stats">
+                <div><div class="cc-stat-n">1,284</div><div class="cc-stat-l">用户</div></div>
+                <div><div class="cc-stat-n">142</div><div class="cc-stat-l">上架</div></div>
+                <div><div class="cc-stat-n">236</div><div class="cc-stat-l">本月成交</div></div>
+              </div>
+              <div class="cc-actions"><span class="act-btn p">编辑</span><span class="act-btn d">禁用</span></div>
+            </div>
+            <div class="campus-card">
+              <div class="cc-header">
+                <div class="cc-name">西区校园</div>
+                <span class="badge badge-ok">启用</span>
+              </div>
+              <div class="cc-addr">西校区图书馆广场</div>
+              <div class="cc-stats">
+                <div><div class="cc-stat-n">986</div><div class="cc-stat-l">用户</div></div>
+                <div><div class="cc-stat-n">98</div><div class="cc-stat-l">上架</div></div>
+                <div><div class="cc-stat-n">178</div><div class="cc-stat-l">本月成交</div></div>
+              </div>
+              <div class="cc-actions"><span class="act-btn p">编辑</span><span class="act-btn d">禁用</span></div>
+            </div>
+            <div class="campus-card">
+              <div class="cc-header">
+                <div class="cc-name">南区校园</div>
+                <span class="badge badge-banned">禁用</span>
+              </div>
+              <div class="cc-addr">南校区体育馆北侧</div>
+              <div class="cc-stats">
+                <div><div class="cc-stat-n">432</div><div class="cc-stat-l">用户</div></div>
+                <div><div class="cc-stat-n">0</div><div class="cc-stat-l">上架</div></div>
+                <div><div class="cc-stat-n">0</div><div class="cc-stat-l">本月成交</div></div>
+              </div>
+              <div class="cc-actions"><span class="act-btn p">编辑</span><span class="act-btn" style="color:var(--green);border-color:var(--green);">启用</span></div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">各校区本月成交量对比</div>
+            <div class="hbar-chart">
+              <div class="hbar-row"><div class="hbar-lbl">东区</div><div class="hbar-track"><div class="hbar-fill hi" style="width:100%;"></div></div><div class="hbar-val">236 单</div></div>
+              <div class="hbar-row"><div class="hbar-lbl">西区</div><div class="hbar-track"><div class="hbar-fill" style="width:75%;"></div></div><div class="hbar-val">178 单</div></div>
+              <div class="hbar-row"><div class="hbar-lbl">南区</div><div class="hbar-track"><div class="hbar-fill" style="width:0%;"></div></div><div class="hbar-val">0 单</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .page -->
+
+<script>
+  // 生成签到热力图数据
+  (function() {
+    const grid = document.getElementById('heatmap');
+    if (!grid) return;
+    const total = 26 * 7;
+    const signedDays = new Set();
+    // 随机模拟已签到天数（约 40% 签到率，前 77 天内）
+    for (let i = 0; i < 77; i++) {
+      if (Math.random() < 0.75) signedDays.add(i);
+    }
+    const todayOffset = 76; // 今天是第 77 天
+
+    for (let i = 0; i < total; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'hm-cell';
+      if (i === todayOffset) {
+        cell.classList.add('today');
+        if (signedDays.has(i)) cell.classList.add('s3');
+      } else if (signedDays.has(i)) {
+        const r = Math.random();
+        cell.classList.add(r < 0.3 ? 's1' : r < 0.65 ? 's2' : 's3');
+      }
+      grid.appendChild(cell);
+    }
+  })();
+</script>
+</body>
+</html>
