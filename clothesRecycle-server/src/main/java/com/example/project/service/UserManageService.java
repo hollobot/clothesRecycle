@@ -11,15 +11,55 @@ import java.util.List;
  */
 public interface UserManageService {
 
-    List<User> listUsers(Long campusId, Integer status, String keyword);
+    /**
+     * 管理端查询用户列表。
+     *
+     * @param campusId          查询校区 ID（可选）
+     * @param status            用户状态（可选）
+     * @param keyword           关键词（可选）
+     * @param operatorCampusId  操作管理员可管理的校区 ID；超级管理员传 null
+     */
+    List<User> listUsers(Long campusId, Integer status, String keyword, Long operatorCampusId);
 
-    User getUserDetail(Long userId);
+    /**
+     * 管理端查询用户详情。
+     *
+     * @param userId            用户 ID
+     * @param operatorCampusId  操作管理员可管理的校区 ID；超级管理员传 null
+     */
+    User getUserDetail(Long userId, Long operatorCampusId);
 
-    Long createUser(CreateUserDto dto);
+    /**
+     * 管理端新增用户。
+     *
+     * @param dto               新增参数
+     * @param operatorCampusId  操作管理员可管理的校区 ID；超级管理员传 null
+     */
+    Long createUser(CreateUserDto dto, Long operatorCampusId);
 
-    void updateUser(Long userId, UpdateUserDto dto);
+    /**
+     * 管理端更新用户。
+     *
+     * @param userId            用户 ID
+     * @param dto               更新参数
+     * @param operatorCampusId  操作管理员可管理的校区 ID；超级管理员传 null
+     */
+    void updateUser(Long userId, UpdateUserDto dto, Long operatorCampusId);
 
-    void changeUserStatus(Long userId, boolean enabled);
+    /**
+     * 管理端变更用户状态。
+     *
+     * @param userId            用户 ID
+     * @param enabled           是否启用
+     * @param operatorCampusId  操作管理员可管理的校区 ID；超级管理员传 null
+     */
+    void changeUserStatus(Long userId, boolean enabled, Long operatorCampusId);
 
-    void deleteUser(Long userId);
+    /**
+     * 管理端删除用户。
+     *
+     * @param userId            用户 ID
+     * @param operatorCampusId  操作管理员可管理的校区 ID；超级管理员传 null
+     */
+    void deleteUser(Long userId, Long operatorCampusId);
 }

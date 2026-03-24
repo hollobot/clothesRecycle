@@ -8,10 +8,19 @@ import VChart from 'vue-echarts'
 import { getGiftList } from '@/api/giftAdmin'
 import { getAdminItems } from '@/api/itemAdmin'
 import { getDropPoints } from '@/api/dropPoint'
+import { useAdminStore } from '@/stores/admin'
 
 use([CanvasRenderer, BarChart, PieChart, GridComponent, TooltipComponent, LegendComponent])
 
 const loading = ref(false)
+/**
+ * 当前登录管理员信息。
+ */
+const adminStore = useAdminStore()
+/**
+ * 是否超级管理员。
+ */
+const isSuperAdmin = computed(() => adminStore.isSuperAdmin)
 const items = ref([])
 const gifts = ref([])
 const dropPoints = ref([])
@@ -21,15 +30,18 @@ const safeArray = (value) => (Array.isArray(value) ? value : [])
 const loadData = async () => {
   loading.value = true
   try {
-    const [itemRes, giftRes, pointRes] = await Promise.allSettled([
-      getAdminItems(),
-      getGiftList(),
-      getDropPoints(),
-    ])
+    const requestTasks = [getAdminItems(), getDropPoints()]
+    // 校区管理员无礼品管理权限，避免调用礼品接口产生无效请求。
+    if (isSuperAdmin.value) {
+      requestTasks.push(getGiftList())
+    }
+
+    const [itemRes, pointRes, giftRes] = await Promise.allSettled(requestTasks)
 
     items.value = itemRes.status === 'fulfilled' ? safeArray(itemRes.value) : []
-    gifts.value = giftRes.status === 'fulfilled' ? safeArray(giftRes.value) : []
     dropPoints.value = pointRes.status === 'fulfilled' ? safeArray(pointRes.value) : []
+    gifts.value =
+      isSuperAdmin.value && giftRes && giftRes.status === 'fulfilled' ? safeArray(giftRes.value) : []
   } finally {
     loading.value = false
   }
@@ -54,6 +66,11 @@ const approvedItems = computed(
 const monthlyGiftExchanged = computed(() =>
   gifts.value.reduce((sum, gift) => sum + Number(gift.exchangedCount || 0), 0),
 )
+
+/**
+ * 校区管理员看板展示项：当前可管理回收点总数。
+ */
+const managedDropPointCount = computed(() => dropPoints.value.length)
 
 const sevenDayStats = computed(() => {
   const now = new Date()
@@ -191,9 +208,16 @@ onMounted(loadData)
           <div class="mc-diff diff-up">可公开展示</div>
         </article>
         <article class="metric-card">
-          <div class="mc-label">礼品兑换总数</div>
-          <div class="mc-value">{{ monthlyGiftExchanged }}</div>
-          <div class="mc-diff diff-up">累计核销</div>
+          <template v-if="isSuperAdmin">
+            <div class="mc-label">礼品兑换总数</div>
+            <div class="mc-value">{{ monthlyGiftExchanged }}</div>
+            <div class="mc-diff diff-up">累计核销</div>
+          </template>
+          <template v-else>
+            <div class="mc-label">回收点总数</div>
+            <div class="mc-value">{{ managedDropPointCount }}</div>
+            <div class="mc-diff diff-up">当前校区</div>
+          </template>
         </article>
       </div>
     </el-card>

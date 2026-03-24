@@ -51,6 +51,8 @@ public class AdminAuthController {
         vo.setToken(StpUtil.getTokenValue());
         vo.setRole(admin.getRole());
         vo.setName(admin.getName());
+        // 返回管理员所属校区，供前端按校区管理员权限做默认筛选与只读展示。
+        vo.setCampusId(admin.getCampusId());
         return Result.ok(vo);
     }
 }

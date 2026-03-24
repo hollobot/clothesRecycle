@@ -69,11 +69,16 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public void audit(Long itemId, boolean approved, String reason, Long adminId) {
+    public void audit(Long itemId,
+                      boolean approved,
+                      String reason,
+                      Long adminId,
+                      Long operatorCampusId) {
         Item item = itemMapper.selectById(itemId);
         if (item == null) {
             throw new BusinessException("物品不存在");
         }
+        validateCampusAccess(operatorCampusId, item.getCampusId());
         if (!"PENDING_AUDIT".equals(item.getStatus())) {
             throw new BusinessException("当前状态不可审核");
         }
@@ -88,11 +93,15 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void forceOffShelf(Long itemId, String reason, Long adminId) {
+    public void forceOffShelf(Long itemId,
+                              String reason,
+                              Long adminId,
+                              Long operatorCampusId) {
         Item item = itemMapper.selectById(itemId);
         if (item == null) {
             throw new BusinessException("物品不存在");
         }
+        validateCampusAccess(operatorCampusId, item.getCampusId());
         item.setStatus("FORCE_OFF_SHELF");
         item.setAuditReason(reason == null ? "管理员强制下架" : reason);
         itemMapper.updateById(item);
@@ -199,6 +208,18 @@ public class ItemServiceImpl implements ItemService {
             if (imageUrl.length() > 255) {
                 throw new BusinessException("图片地址长度不能超过255");
             }
+        }
+    }
+
+    /**
+     * 校验校区管理员是否具备目标数据权限。
+     *
+     * @param operatorCampusId 操作管理员可管理校区，超级管理员为 null
+     * @param targetCampusId   目标数据所属校区
+     */
+    private void validateCampusAccess(Long operatorCampusId, Long targetCampusId) {
+        if (operatorCampusId != null && !operatorCampusId.equals(targetCampusId)) {
+            throw new BusinessException("无权限操作其他校区物品");
         }
     }
 }

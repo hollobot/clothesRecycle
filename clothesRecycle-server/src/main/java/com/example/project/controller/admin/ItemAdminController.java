@@ -1,14 +1,19 @@
 package com.example.project.controller.admin;
 
-import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.project.common.result.Result;
-import com.example.project.exception.BusinessException;
 import com.example.project.mapper.ItemMapper;
+import com.example.project.model.po.Admin;
 import com.example.project.model.po.Item;
 import com.example.project.model.vo.item.ItemDetailVo;
 import com.example.project.service.ItemService;
-import org.springframework.web.bind.annotation.*;
+import com.example.project.service.support.AdminSessionService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -20,11 +25,21 @@ import java.util.List;
 public class ItemAdminController {
 
     private final ItemService itemService;
+    /**
+     * 物品数据访问。
+     */
     private final ItemMapper itemMapper;
+    /**
+     * 管理端会话与权限范围服务。
+     */
+    private final AdminSessionService adminSessionService;
 
-    public ItemAdminController(ItemService itemService, ItemMapper itemMapper) {
+    public ItemAdminController(ItemService itemService,
+                               ItemMapper itemMapper,
+                               AdminSessionService adminSessionService) {
         this.itemService = itemService;
         this.itemMapper = itemMapper;
+        this.adminSessionService = adminSessionService;
     }
 
     /**
@@ -32,8 +47,12 @@ public class ItemAdminController {
      */
     @GetMapping
     public Result<List<Item>> list(@RequestParam(required = false) String status) {
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Long scopedCampusId = adminSessionService.resolveCampusScope(currentAdmin, null);
+
         LambdaQueryWrapper<Item> query = new LambdaQueryWrapper<Item>()
                 .eq(status != null && !status.isBlank(), Item::getStatus, status)
+                .eq(scopedCampusId != null, Item::getCampusId, scopedCampusId)
                 .orderByDesc(Item::getCreateTime);
         return Result.ok(itemMapper.selectList(query));
     }
@@ -43,6 +62,11 @@ public class ItemAdminController {
      */
     @GetMapping("/{itemId}")
     public Result<ItemDetailVo> detail(@PathVariable Long itemId) {
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Item item = itemMapper.selectById(itemId);
+        if (item != null) {
+            adminSessionService.requireCampusAccess(currentAdmin, item.getCampusId(), "查看");
+        }
         return Result.ok(itemService.getDetail(itemId));
     }
 
@@ -53,8 +77,9 @@ public class ItemAdminController {
     public Result<Void> audit(@PathVariable Long itemId,
                               @RequestParam boolean approved,
                               @RequestParam(required = false) String reason) {
-        Long adminId = extractAdminId();
-        itemService.audit(itemId, approved, reason, adminId);
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Long operatorCampusId = adminSessionService.resolveCampusScope(currentAdmin, null);
+        itemService.audit(itemId, approved, reason, currentAdmin.getId(), operatorCampusId);
         return Result.ok();
     }
 
@@ -64,25 +89,9 @@ public class ItemAdminController {
     @PostMapping("/{itemId}/force-off-shelf")
     public Result<Void> forceOffShelf(@PathVariable Long itemId,
                                       @RequestParam(required = false) String reason) {
-        Long adminId = extractAdminId();
-        itemService.forceOffShelf(itemId, reason, adminId);
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Long operatorCampusId = adminSessionService.resolveCampusScope(currentAdmin, null);
+        itemService.forceOffShelf(itemId, reason, currentAdmin.getId(), operatorCampusId);
         return Result.ok();
-    }
-
-    /**
-     * 解析当前登录管理员 ID。
-     * <p>管理端登录态格式为 ADMIN_{id}，例如 ADMIN_1。</p>
-     */
-    private Long extractAdminId() {
-        String loginId = String.valueOf(StpUtil.getLoginId());
-        if (!loginId.startsWith("ADMIN_")) {
-            throw new BusinessException("管理员登录态无效，请重新登录");
-        }
-        String adminIdText = loginId.substring("ADMIN_".length());
-        try {
-            return Long.valueOf(adminIdText);
-        } catch (NumberFormatException e) {
-            throw new BusinessException("管理员登录态无效，请重新登录");
-        }
     }
 }

@@ -24,7 +24,8 @@ public class UserManageServiceImpl implements UserManageService {
     }
 
     @Override
-    public List<User> listUsers(Long campusId, Integer status, String keyword) {
+    public List<User> listUsers(Long campusId, Integer status, String keyword, Long operatorCampusId) {
+        validateCampusAccess(operatorCampusId, campusId, "查询");
         LambdaQueryWrapper<User> query = new LambdaQueryWrapper<User>()
                 .eq(campusId != null, User::getCampusId, campusId)
                 .eq(status != null, User::getStatus, status)
@@ -39,16 +40,18 @@ public class UserManageServiceImpl implements UserManageService {
     }
 
     @Override
-    public User getUserDetail(Long userId) {
+    public User getUserDetail(Long userId, Long operatorCampusId) {
         User user = userMapper.selectById(userId);
         if (user == null) {
             throw new BusinessException("用户不存在");
         }
+        validateCampusAccess(operatorCampusId, user.getCampusId(), "查看");
         return user;
     }
 
     @Override
-    public Long createUser(CreateUserDto dto) {
+    public Long createUser(CreateUserDto dto, Long operatorCampusId) {
+        validateCampusAccess(operatorCampusId, dto.getCampusId(), "新增");
         if (existsPhone(dto.getPhone())) {
             throw new BusinessException("手机号已存在");
         }
@@ -71,11 +74,13 @@ public class UserManageServiceImpl implements UserManageService {
     }
 
     @Override
-    public void updateUser(Long userId, UpdateUserDto dto) {
+    public void updateUser(Long userId, UpdateUserDto dto, Long operatorCampusId) {
+        validateCampusAccess(operatorCampusId, dto.getCampusId(), "修改");
         User user = userMapper.selectById(userId);
         if (user == null) {
             throw new BusinessException("用户不存在");
         }
+        validateCampusAccess(operatorCampusId, user.getCampusId(), "修改");
         user.setName(dto.getName());
         user.setCampusId(dto.getCampusId());
         user.setAvatarUrl(dto.getAvatarUrl() == null ? "" : dto.getAvatarUrl());
@@ -83,21 +88,23 @@ public class UserManageServiceImpl implements UserManageService {
     }
 
     @Override
-    public void changeUserStatus(Long userId, boolean enabled) {
+    public void changeUserStatus(Long userId, boolean enabled, Long operatorCampusId) {
         User user = userMapper.selectById(userId);
         if (user == null) {
             throw new BusinessException("用户不存在");
         }
+        validateCampusAccess(operatorCampusId, user.getCampusId(), "操作");
         user.setStatus(enabled ? 1 : 0);
         userMapper.updateById(user);
     }
 
     @Override
-    public void deleteUser(Long userId) {
+    public void deleteUser(Long userId, Long operatorCampusId) {
         User user = userMapper.selectById(userId);
         if (user == null) {
             throw new BusinessException("用户不存在");
         }
+        validateCampusAccess(operatorCampusId, user.getCampusId(), "删除");
         userMapper.deleteById(userId);
     }
 
@@ -111,5 +118,18 @@ public class UserManageServiceImpl implements UserManageService {
         LambdaQueryWrapper<User> query = new LambdaQueryWrapper<User>()
                 .eq(User::getStudentId, studentId);
         return userMapper.selectCount(query) > 0;
+    }
+
+    /**
+     * 校验校区管理员是否可操作目标校区用户数据。
+     *
+     * @param operatorCampusId 操作管理员可管理校区，超级管理员为 null
+     * @param targetCampusId   目标数据所属校区
+     * @param action           业务动作描述
+     */
+    private void validateCampusAccess(Long operatorCampusId, Long targetCampusId, String action) {
+        if (operatorCampusId != null && !operatorCampusId.equals(targetCampusId)) {
+            throw new BusinessException("无权限" + action + "其他校区用户");
+        }
     }
 }

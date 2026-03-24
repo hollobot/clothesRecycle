@@ -3,8 +3,10 @@ package com.example.project.controller.admin;
 import com.example.project.common.result.Result;
 import com.example.project.model.dto.user.CreateUserDto;
 import com.example.project.model.dto.user.UpdateUserDto;
+import com.example.project.model.po.Admin;
 import com.example.project.model.po.User;
 import com.example.project.service.UserManageService;
+import com.example.project.service.support.AdminSessionService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,10 +27,19 @@ import java.util.List;
 @RequestMapping("/api/admin/users")
 public class UserAdminController {
 
+    /**
+     * 用户管理业务。
+     */
     private final UserManageService userManageService;
+    /**
+     * 管理端会话与权限范围服务。
+     */
+    private final AdminSessionService adminSessionService;
 
-    public UserAdminController(UserManageService userManageService) {
+    public UserAdminController(UserManageService userManageService,
+                               AdminSessionService adminSessionService) {
         this.userManageService = userManageService;
+        this.adminSessionService = adminSessionService;
     }
 
     /**
@@ -40,7 +51,9 @@ public class UserAdminController {
             @RequestParam(required = false) Integer status,
             @RequestParam(required = false) String keyword
     ) {
-        return Result.ok(userManageService.listUsers(campusId, status, keyword));
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Long scopedCampusId = adminSessionService.resolveCampusScope(currentAdmin, campusId);
+        return Result.ok(userManageService.listUsers(scopedCampusId, status, keyword, scopedCampusId));
     }
 
     /**
@@ -48,7 +61,9 @@ public class UserAdminController {
      */
     @GetMapping("/{userId}")
     public Result<User> detail(@PathVariable Long userId) {
-        return Result.ok(userManageService.getUserDetail(userId));
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Long scopedCampusId = adminSessionService.resolveCampusScope(currentAdmin, null);
+        return Result.ok(userManageService.getUserDetail(userId, scopedCampusId));
     }
 
     /**
@@ -56,7 +71,9 @@ public class UserAdminController {
      */
     @PostMapping
     public Result<Long> create(@Valid @RequestBody CreateUserDto dto) {
-        return Result.ok(userManageService.createUser(dto));
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Long scopedCampusId = adminSessionService.resolveCampusScope(currentAdmin, dto.getCampusId());
+        return Result.ok(userManageService.createUser(dto, scopedCampusId));
     }
 
     /**
@@ -64,7 +81,9 @@ public class UserAdminController {
      */
     @PutMapping("/{userId}")
     public Result<Void> update(@PathVariable Long userId, @Valid @RequestBody UpdateUserDto dto) {
-        userManageService.updateUser(userId, dto);
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Long scopedCampusId = adminSessionService.resolveCampusScope(currentAdmin, dto.getCampusId());
+        userManageService.updateUser(userId, dto, scopedCampusId);
         return Result.ok();
     }
 
@@ -73,7 +92,9 @@ public class UserAdminController {
      */
     @PostMapping("/{userId}/status")
     public Result<Void> changeStatus(@PathVariable Long userId, @RequestParam boolean enabled) {
-        userManageService.changeUserStatus(userId, enabled);
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Long scopedCampusId = adminSessionService.resolveCampusScope(currentAdmin, null);
+        userManageService.changeUserStatus(userId, enabled, scopedCampusId);
         return Result.ok();
     }
 
@@ -82,7 +103,9 @@ public class UserAdminController {
      */
     @DeleteMapping("/{userId}")
     public Result<Void> delete(@PathVariable Long userId) {
-        userManageService.deleteUser(userId);
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Long scopedCampusId = adminSessionService.resolveCampusScope(currentAdmin, null);
+        userManageService.deleteUser(userId, scopedCampusId);
         return Result.ok();
     }
 }

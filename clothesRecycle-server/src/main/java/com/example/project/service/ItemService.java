@@ -13,9 +13,26 @@ public interface ItemService {
 
     Long publish(Long userId, PublishItemDto dto);
 
-    void audit(Long itemId, boolean approved, String reason, Long adminId);
+    /**
+     * 审核物品。
+     *
+     * @param itemId            物品 ID
+     * @param approved          是否通过
+     * @param reason            审核说明
+     * @param adminId           操作管理员 ID
+     * @param operatorCampusId  操作管理员可管理的校区 ID；超级管理员传 null
+     */
+    void audit(Long itemId, boolean approved, String reason, Long adminId, Long operatorCampusId);
 
-    void forceOffShelf(Long itemId, String reason, Long adminId);
+    /**
+     * 强制下架物品。
+     *
+     * @param itemId            物品 ID
+     * @param reason            下架原因
+     * @param adminId           操作管理员 ID
+     * @param operatorCampusId  操作管理员可管理的校区 ID；超级管理员传 null
+     */
+    void forceOffShelf(Long itemId, String reason, Long adminId, Long operatorCampusId);
 
     ItemDetailVo getDetail(Long itemId);
 

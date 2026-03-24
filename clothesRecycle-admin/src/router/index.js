@@ -46,7 +46,7 @@ const routes = [
       {
         path: 'gifts',
         component: () => import('@/views/gift/GiftManageView.vue'),
-        meta: { title: '礼品管理' },
+        meta: { title: '礼品管理', superOnly: true },
       },
     ],
   },

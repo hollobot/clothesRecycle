@@ -129,7 +129,7 @@ onMounted(async () => {
 <template>
   <div class="page" v-if="detail">
     <div class="topbar topbar-back">
-      <button class="ghost-btn" @click="$router.back()">← 返回</button>
+      <button class="ghost-btn" @click="$router.back()">返回</button>
       <h1>物品详情</h1>
       <span style="width: 54px"></span>
     </div>

@@ -8,15 +8,20 @@ const router = useRouter()
 const store = useAdminStore()
 
 const topNavItems = computed(() => {
+  // 超级管理员可访问礼品管理；校区管理员不展示该入口。
   const base = [
     { to: '/dashboard', label: '数据看板' },
     { to: '/items', label: '物品管理' },
     { to: '/drop-points', label: '回收点管理' },
-    { to: '/gifts', label: '积分礼品' },
   ]
 
   if (store.isSuperAdmin) {
-    return [{ to: '/campus', label: '校区管理' }, ...base, { to: '/admins', label: '管理员账号' }]
+    return [
+      { to: '/campus', label: '校区管理' },
+      ...base,
+      { to: '/gifts', label: '积分礼品' },
+      { to: '/admins', label: '管理员账号' },
+    ]
   }
 
   return base
@@ -33,12 +38,12 @@ const sideNavGroups = computed(() => {
       items: [
         { to: '/items', label: '物品审核', color: 'var(--amber)' },
         { to: '/drop-points', label: '回收点管理', color: '#52b788' },
-        { to: '/gifts', label: '礼品管理', color: '#e07b54' },
       ],
     },
   ]
 
   if (store.isSuperAdmin) {
+    groups[1].items.push({ to: '/gifts', label: '礼品管理', color: '#e07b54' })
     groups.unshift({
       label: '系统管理',
       items: [

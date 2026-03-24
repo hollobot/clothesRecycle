@@ -250,7 +250,7 @@ onUnmounted(() => {
 <template>
   <div class="page" v-loading="loading">
     <div class="topbar topbar-back">
-      <button class="ghost-btn" @click="$router.back()">← 返回</button>
+      <button class="ghost-btn" @click="$router.back()">返回</button>
       <h1>编辑资料</h1>
       <span style="width: 54px"></span>
     </div>

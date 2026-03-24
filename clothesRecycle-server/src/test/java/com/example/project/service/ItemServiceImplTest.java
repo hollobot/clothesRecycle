@@ -116,4 +116,17 @@ class ItemServiceImplTest {
         assertThat(detail.getId()).isEqualTo(10L);
         assertThat(detail.getImageUrls()).containsExactly("http://img/a.jpg", "http://img/b.jpg");
     }
+
+    @Test
+    void should_reject_audit_when_campus_admin_operates_other_campus_item() {
+        Item item = new Item();
+        item.setId(99L);
+        item.setCampusId(2L);
+        item.setStatus("PENDING_AUDIT");
+        when(itemMapper.selectById(99L)).thenReturn(item);
+
+        assertThatThrownBy(() -> itemService.audit(99L, true, "", 7L, 1L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("无权限操作其他校区物品");
+    }
 }

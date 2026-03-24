@@ -1,11 +1,12 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   changeGiftStatus,
   createGift,
   getGiftExchanges,
   getGiftList,
+  uploadGiftImages,
   updateGift,
   verifyGiftExchange,
 } from '@/api/giftAdmin'
@@ -19,6 +20,10 @@ const dialogVisible = ref(false)
 const isEdit = ref(false)
 const currentId = ref(null)
 const saving = ref(false)
+/**
+ * 图片上传中状态。
+ */
+const uploadLoading = ref(false)
 const formRef = ref()
 
 const filters = reactive({
@@ -32,6 +37,16 @@ const formData = reactive({
   pointCost: 10,
   stock: 10,
 })
+
+/**
+ * 规范化礼品图片地址。
+ *
+ * @param {string} url 图片地址
+ */
+const normalizeImageUrl = (url) => {
+  const value = String(url || '').trim()
+  return value || ''
+}
 
 const rules = {
   name: [{ required: true, message: '请输入礼品名称', trigger: 'blur' }],
@@ -64,6 +79,37 @@ const load = async () => {
   }
 }
 
+/**
+ * 上传礼品图片（单图），成功后自动回填表单图片地址。
+ *
+ * @param {import('element-plus').UploadFile} uploadFile 上传文件对象
+ */
+const uploadGiftImage = async (uploadFile) => {
+  const raw = uploadFile?.raw
+  if (!raw) {
+    return
+  }
+  if (!String(raw.type || '').startsWith('image/')) {
+    ElMessage.warning('仅支持图片格式文件')
+    return
+  }
+  if (raw.size > 5 * 1024 * 1024) {
+    ElMessage.warning('单张图片大小不能超过 5MB')
+    return
+  }
+
+  uploadLoading.value = true
+  try {
+    const urls = await uploadGiftImages([raw])
+    formData.imageUrl = normalizeImageUrl(Array.isArray(urls) ? urls[0] : '')
+    ElMessage.success('礼品图片上传成功')
+  } catch (error) {
+    ElMessage.error(error.message || '礼品图片上传失败')
+  } finally {
+    uploadLoading.value = false
+  }
+}
+
 const resetForm = () => {
   currentId.value = null
   formData.name = ''
@@ -84,7 +130,7 @@ const openEditDialog = (gift) => {
   currentId.value = gift.id
   formData.name = gift.name || ''
   formData.description = gift.description || ''
-  formData.imageUrl = gift.imageUrl || ''
+  formData.imageUrl = normalizeImageUrl(gift.imageUrl)
   formData.pointCost = Number(gift.pointCost || 1)
   formData.stock = Number(gift.stock || 0)
   dialogVisible.value = true
@@ -92,13 +138,19 @@ const openEditDialog = (gift) => {
 
 const submitForm = async () => {
   await formRef.value.validate()
-
-  saving.value = true
   try {
+    const actionText = isEdit.value ? '更新礼品信息' : '创建礼品'
+    await ElMessageBox.confirm(`确认${actionText}吗？`, '操作确认', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
+
+    saving.value = true
     const payload = {
       name: formData.name,
       description: formData.description,
-      imageUrl: formData.imageUrl,
+      imageUrl: normalizeImageUrl(formData.imageUrl),
       pointCost: Number(formData.pointCost),
       stock: Number(formData.stock),
     }
@@ -113,6 +165,10 @@ const submitForm = async () => {
 
     dialogVisible.value = false
     await load()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.message || '礼品保存失败')
+    }
   } finally {
     saving.value = false
   }
@@ -120,15 +176,41 @@ const submitForm = async () => {
 
 const toggleStatus = async (gift) => {
   const enable = Number(gift.status) !== 1
-  await changeGiftStatus(gift.id, enable)
-  ElMessage.success(enable ? '礼品已上架' : '礼品已下架')
-  await load()
+  try {
+    await ElMessageBox.confirm(
+      `确认将礼品「${gift.name || '#'}」${enable ? '上架' : '下架'}吗？`,
+      '状态变更确认',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      },
+    )
+    await changeGiftStatus(gift.id, enable)
+    ElMessage.success(enable ? '礼品已上架' : '礼品已下架')
+    await load()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.message || '礼品状态更新失败')
+    }
+  }
 }
 
 const verifyExchange = async (exchangeId) => {
-  await verifyGiftExchange(exchangeId)
-  ElMessage.success('兑换记录已核销')
-  await load()
+  try {
+    await ElMessageBox.confirm('确认核销该兑换记录吗？', '核销确认', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
+    await verifyGiftExchange(exchangeId)
+    ElMessage.success('兑换记录已核销')
+    await load()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.message || '核销失败')
+    }
+  }
 }
 
 onMounted(load)
@@ -159,6 +241,19 @@ onMounted(load)
 
       <el-card shadow="never">
         <el-table :data="gifts" v-loading="loading" border>
+          <el-table-column label="礼品图片" width="110">
+            <template #default="{ row }">
+              <el-image
+                v-if="normalizeImageUrl(row.imageUrl)"
+                :src="normalizeImageUrl(row.imageUrl)"
+                fit="cover"
+                class="gift-cover-table"
+                :preview-src-list="[normalizeImageUrl(row.imageUrl)]"
+                preview-teleported
+              />
+              <div v-else class="gift-cover-table gift-cover-empty">暂无图片</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="name" label="礼品" min-width="160">
             <template #default="{ row }">
               <div>{{ row.name }}</div>
@@ -259,6 +354,25 @@ onMounted(load)
         <el-form-item label="图片地址">
           <el-input v-model="formData.imageUrl" maxlength="255" show-word-limit />
         </el-form-item>
+        <el-form-item label="上传图片">
+          <el-upload
+            :auto-upload="false"
+            :show-file-list="false"
+            accept="image/*"
+            :on-change="uploadGiftImage"
+          >
+            <el-button :loading="uploadLoading">上传礼品图片</el-button>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="图片预览" v-if="normalizeImageUrl(formData.imageUrl)">
+          <el-image
+            :src="normalizeImageUrl(formData.imageUrl)"
+            fit="cover"
+            class="gift-cover-preview"
+            :preview-src-list="[normalizeImageUrl(formData.imageUrl)]"
+            preview-teleported
+          />
+        </el-form-item>
         <el-form-item label="所需积分" prop="pointCost">
           <el-input-number v-model="formData.pointCost" :min="1" :max="10000" />
         </el-form-item>
@@ -279,5 +393,27 @@ onMounted(load)
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.gift-cover-table {
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+}
+
+.gift-cover-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #8a8a8a;
+  background: #f5f7fa;
+  border: 1px dashed #d8dde6;
+}
+
+.gift-cover-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
 }
 </style>

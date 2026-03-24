@@ -13,3 +13,21 @@ export const getGiftExchanges = () => request.get('/api/admin/gifts/exchanges')
 
 export const verifyGiftExchange = (exchangeId) =>
   request.post(`/api/admin/gifts/exchanges/${exchangeId}/verify`)
+
+/**
+ * 上传礼品图片，返回图片 URL 列表。
+ *
+ * @param {File[]} files 图片文件数组
+ */
+export const uploadGiftImages = (files) => {
+  const formData = new FormData()
+  files.forEach((file) => {
+    formData.append('files', file)
+  })
+
+  return request.post('/api/admin/files/images', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+}

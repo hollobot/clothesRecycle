@@ -2,8 +2,10 @@ package com.example.project.controller.admin;
 
 import com.example.project.common.result.Result;
 import com.example.project.model.dto.drop.SaveDropPointDto;
+import com.example.project.model.po.Admin;
 import com.example.project.model.po.DropPoint;
 import com.example.project.service.DropPointService;
+import com.example.project.service.support.AdminSessionService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,10 +25,19 @@ import java.util.List;
 @RequestMapping("/api/admin/drop-points")
 public class DropPointAdminController {
 
+    /**
+     * 回收点业务。
+     */
     private final DropPointService dropPointService;
+    /**
+     * 管理端会话与权限范围服务。
+     */
+    private final AdminSessionService adminSessionService;
 
-    public DropPointAdminController(DropPointService dropPointService) {
+    public DropPointAdminController(DropPointService dropPointService,
+                                    AdminSessionService adminSessionService) {
         this.dropPointService = dropPointService;
+        this.adminSessionService = adminSessionService;
     }
 
     /**
@@ -34,7 +45,9 @@ public class DropPointAdminController {
      */
     @GetMapping
     public Result<List<DropPoint>> list(@RequestParam(required = false) Long campusId) {
-        return Result.ok(dropPointService.listAdminDropPoints(campusId));
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Long scopedCampusId = adminSessionService.resolveCampusScope(currentAdmin, campusId);
+        return Result.ok(dropPointService.listAdminDropPoints(scopedCampusId, scopedCampusId));
     }
 
     /**
@@ -42,7 +55,9 @@ public class DropPointAdminController {
      */
     @PostMapping
     public Result<Long> create(@Valid @RequestBody SaveDropPointDto dto) {
-        return Result.ok(dropPointService.createDropPoint(dto));
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Long scopedCampusId = adminSessionService.resolveCampusScope(currentAdmin, dto.getCampusId());
+        return Result.ok(dropPointService.createDropPoint(dto, scopedCampusId));
     }
 
     /**
@@ -50,7 +65,9 @@ public class DropPointAdminController {
      */
     @PutMapping("/{dropPointId}")
     public Result<Void> update(@PathVariable Long dropPointId, @Valid @RequestBody SaveDropPointDto dto) {
-        dropPointService.updateDropPoint(dropPointId, dto);
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Long scopedCampusId = adminSessionService.resolveCampusScope(currentAdmin, dto.getCampusId());
+        dropPointService.updateDropPoint(dropPointId, dto, scopedCampusId);
         return Result.ok();
     }
 
@@ -59,7 +76,9 @@ public class DropPointAdminController {
      */
     @PostMapping("/{dropPointId}/status")
     public Result<Void> changeStatus(@PathVariable Long dropPointId, @RequestParam boolean enabled) {
-        dropPointService.changeDropPointStatus(dropPointId, enabled);
+        Admin currentAdmin = adminSessionService.getCurrentAdmin();
+        Long scopedCampusId = adminSessionService.resolveCampusScope(currentAdmin, null);
+        dropPointService.changeDropPointStatus(dropPointId, enabled, scopedCampusId);
         return Result.ok();
     }
 }

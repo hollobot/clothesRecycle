@@ -2,7 +2,9 @@ package com.example.project.controller.admin;
 
 import com.example.project.exception.GlobalExceptionHandler;
 import com.example.project.model.dto.user.CreateUserDto;
+import com.example.project.model.po.Admin;
 import com.example.project.service.UserManageService;
+import com.example.project.service.support.AdminSessionService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,9 +46,23 @@ class UserAdminControllerTest {
     @MockBean
     private UserManageService userManageService;
 
+    @MockBean
+    private AdminSessionService adminSessionService;
+
+    private Admin buildCampusAdmin() {
+        Admin admin = new Admin();
+        admin.setId(11L);
+        admin.setRole("CAMPUS_ADMIN");
+        admin.setCampusId(1L);
+        admin.setStatus(1);
+        return admin;
+    }
+
     @Test
     void should_create_user_when_request_valid() throws Exception {
-        when(userManageService.createUser(any(CreateUserDto.class))).thenReturn(101L);
+        when(adminSessionService.getCurrentAdmin()).thenReturn(buildCampusAdmin());
+        when(adminSessionService.resolveCampusScope(any(Admin.class), anyLong())).thenReturn(1L);
+        when(userManageService.createUser(any(CreateUserDto.class), anyLong())).thenReturn(101L);
 
         String body = """
                 {
@@ -73,6 +90,8 @@ class UserAdminControllerTest {
 
     @Test
     void should_return_400_when_create_user_request_invalid() throws Exception {
+        when(adminSessionService.getCurrentAdmin()).thenReturn(buildCampusAdmin());
+
         String body = """
                 {
                   "phone": "",

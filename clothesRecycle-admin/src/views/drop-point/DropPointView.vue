@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getCampusOptions } from '@/api/campus'
 import {
@@ -8,11 +8,65 @@ import {
   getDropPoints,
   updateDropPoint,
 } from '@/api/dropPoint'
+import { useAdminStore } from '@/stores/admin'
 
 const loading = ref(false)
 const saving = ref(false)
+/**
+ * 校区数据源（用于名称展示与超级管理员选择）。
+ */
 const campuses = ref([])
 const points = ref([])
+
+/**
+ * 当前登录管理员信息。
+ */
+const adminStore = useAdminStore()
+/**
+ * 是否超级管理员。
+ */
+const isSuperAdmin = computed(() => adminStore.isSuperAdmin)
+/**
+ * 当前管理员所属校区 ID（校区管理员必填，超级管理员可能为空）。
+ */
+const adminCampusId = computed(() => Number(adminStore.profile?.campusId) || null)
+/**
+ * 校区管理员有效校区 ID（优先登录态，缺失时根据已加载数据回填）。
+ */
+const effectiveAdminCampusId = ref(adminCampusId.value)
+
+/**
+ * 获取当前操作人有效校区 ID。
+ */
+const getOperatorCampusId = () => adminCampusId.value || effectiveAdminCampusId.value || null
+/**
+ * 查询与表单可用校区选项：校区管理员仅保留自己校区。
+ */
+const campusOptions = computed(() => {
+  if (isSuperAdmin.value) {
+    return campuses.value
+  }
+  const operatorCampusId = getOperatorCampusId()
+  if (!operatorCampusId) {
+    return []
+  }
+  return campuses.value.filter((campus) => Number(campus.id) === operatorCampusId)
+})
+
+const resolveScopedCampusId = (campusId) => {
+  if (isSuperAdmin.value) {
+    return campusId ? Number(campusId) : undefined
+  }
+  return getOperatorCampusId() || undefined
+}
+
+/**
+ * 根据校区 ID 显示校区名称，避免类型不一致时回退成数字。
+ */
+const getCampusName = (campusId) => {
+  const matched = campuses.value.find((campus) => Number(campus.id) === Number(campusId))
+  return matched ? matched.name : `#${campusId}`
+}
 
 const filters = reactive({
   campusId: '',
@@ -47,8 +101,18 @@ const loadCampuses = async () => {
 const loadPoints = async () => {
   loading.value = true
   try {
-    const res = await getDropPoints(filters.campusId || undefined)
+    const scopedCampusId = resolveScopedCampusId(filters.campusId)
+    const res = await getDropPoints(scopedCampusId)
     points.value = Array.isArray(res) ? res : []
+
+    // 老登录态可能没有 campusId，这里按接口返回数据回填管理员校区默认值。
+    if (!isSuperAdmin.value && !getOperatorCampusId() && points.value.length > 0) {
+      const fallbackCampusId = Number(points.value[0].campusId) || null
+      if (fallbackCampusId) {
+        effectiveAdminCampusId.value = fallbackCampusId
+        filters.campusId = fallbackCampusId
+      }
+    }
   } finally {
     loading.value = false
   }
@@ -56,7 +120,7 @@ const loadPoints = async () => {
 
 const resetForm = () => {
   currentId.value = null
-  formData.campusId = ''
+  formData.campusId = isSuperAdmin.value ? '' : resolveScopedCampusId(filters.campusId) || ''
   formData.name = ''
   formData.locationDesc = ''
   formData.openTime = ''
@@ -70,9 +134,14 @@ const openCreateDialog = () => {
 }
 
 const openEditDialog = (row) => {
+  // 兼容老登录态缺失 campusId：打开编辑时用当前行回填管理员校区默认值。
+  if (!isSuperAdmin.value && !getOperatorCampusId() && row?.campusId) {
+    effectiveAdminCampusId.value = Number(row.campusId) || null
+  }
   isEdit.value = true
   currentId.value = row.id
-  formData.campusId = row.campusId
+  // 编辑场景仍显示数据原校区；校区管理员字段只读不可改。
+  formData.campusId = Number(row.campusId) || ''
   formData.name = row.name || ''
   formData.locationDesc = row.locationDesc || ''
   formData.openTime = row.openTime || ''
@@ -86,7 +155,7 @@ const submitForm = async () => {
   saving.value = true
   try {
     const payload = {
-      campusId: Number(formData.campusId),
+      campusId: resolveScopedCampusId(formData.campusId),
       name: formData.name,
       locationDesc: formData.locationDesc,
       openTime: formData.openTime,
@@ -117,6 +186,10 @@ const toggleStatus = async (row) => {
 
 onMounted(async () => {
   await loadCampuses()
+  // 校区管理员默认锁定为本人校区，筛选框不可切换。
+  if (!isSuperAdmin.value) {
+    filters.campusId = resolveScopedCampusId(null) || ''
+  }
   await loadPoints()
 })
 </script>
@@ -128,15 +201,16 @@ onMounted(async () => {
         <el-form-item>
           <el-select
             v-model="filters.campusId"
-            placeholder="全部校区"
-            clearable
+            placeholder="校区"
+            :clearable="isSuperAdmin"
+            :disabled="!isSuperAdmin"
             style="width: 160px"
           >
             <el-option
-              v-for="campus in campuses"
+              v-for="campus in campusOptions"
               :key="campus.id"
               :label="campus.name"
-              :value="campus.id"
+              :value="Number(campus.id)"
             />
           </el-select>
         </el-form-item>
@@ -152,7 +226,7 @@ onMounted(async () => {
         <el-table-column prop="name" label="名称" min-width="140" />
         <el-table-column label="所属校区" min-width="130">
           <template #default="{ row }">
-            {{ campuses.find((it) => it.id === row.campusId)?.name || `#${row.campusId}` }}
+            {{ getCampusName(row.campusId) }}
           </template>
         </el-table-column>
         <el-table-column prop="locationDesc" label="位置描述" min-width="180" />
@@ -188,12 +262,12 @@ onMounted(async () => {
     >
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="96px">
         <el-form-item label="所属校区" prop="campusId">
-          <el-select v-model="formData.campusId" style="width: 100%">
+          <el-select v-model="formData.campusId" :disabled="!isSuperAdmin" style="width: 100%">
             <el-option
-              v-for="campus in campuses"
+              v-for="campus in campusOptions"
               :key="campus.id"
               :label="campus.name"
-              :value="campus.id"
+              :value="Number(campus.id)"
             />
           </el-select>
         </el-form-item>
