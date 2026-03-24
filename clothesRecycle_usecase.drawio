@@ -1,0 +1,420 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- ═══════════════════════════════════════════════════════
+         PAGE TITLE
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="title1" value="校园旧衣回收与流转平台 — UML 用例图" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="400" y="20" width="854" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SYSTEM BOUNDARY
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="boundary" value="&lt;b&gt;「校园旧衣回收与流转平台」&lt;/b&gt;" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.flowchart.start_2;whiteSpace=wrap;html=1;strokeColor=#666666;fillColor=none;dashed=1;dashPattern=8 4;strokeWidth=2;fontSize=13;verticalAlign=top;align=center;" vertex="1" parent="1">
+      <mxGeometry x="220" y="70" width="1200" height="1050" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         ACTORS
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- 普通用户 -->
+    <mxCell id="actor_user" value="普通用户" style="shape=mxgraph.uml.actor;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="300" width="60" height="100" as="geometry" />
+    </mxCell>
+
+    <!-- 系统管理员（抽象父） -->
+    <mxCell id="actor_admin_abstract" value="系统管理员&#xa;(抽象)" style="shape=mxgraph.uml.actor;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=12;fontStyle=2;" vertex="1" parent="1">
+      <mxGeometry x="1480" y="130" width="60" height="100" as="geometry" />
+    </mxCell>
+
+    <!-- 校区管理员 -->
+    <mxCell id="actor_campus_admin" value="校区管理员" style="shape=mxgraph.uml.actor;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="1480" y="400" width="60" height="100" as="geometry" />
+    </mxCell>
+
+    <!-- 超级管理员 -->
+    <mxCell id="actor_super_admin" value="超级管理员" style="shape=mxgraph.uml.actor;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="1480" y="750" width="60" height="100" as="geometry" />
+    </mxCell>
+
+    <!-- MinIO 外部系统 -->
+    <mxCell id="actor_minio" value="MinIO&#xa;(对象存储)" style="shape=mxgraph.uml.actor;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="760" width="60" height="100" as="geometry" />
+    </mxCell>
+
+    <!-- Redis 外部系统 -->
+    <mxCell id="actor_redis" value="Redis&#xa;(缓存/会话)" style="shape=mxgraph.uml.actor;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="900" width="60" height="100" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         GENERALIZATION ARROWS  (校区管理员/超级管理员 → 系统管理员)
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="gen1" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=0;strokeColor=#666666;strokeWidth=1.5;" edge="1" source="actor_campus_admin" target="actor_admin_abstract" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="gen1_lbl" value="«generalize»" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" vertex="1" connectable="0" parent="gen1">
+      <mxGeometry x="-0.1" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+    </mxCell>
+
+    <mxCell id="gen2" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=0;strokeColor=#666666;strokeWidth=1.5;" edge="1" source="actor_super_admin" target="actor_admin_abstract" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="gen2_lbl" value="«generalize»" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" vertex="1" connectable="0" parent="gen2">
+      <mxGeometry x="-0.1" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MODULE A: 账号与个人资料  (紫色区域)
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="mod_a" value="账号与个人资料" style="swimlane;startSize=25;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="240" y="90" width="220" height="220" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_register" value="注册账号" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_a">
+      <mxGeometry x="30" y="35" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_login" value="登录 / 退出" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_a">
+      <mxGeometry x="30" y="85" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_profile" value="修改个人资料" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_a">
+      <mxGeometry x="30" y="135" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_message" value="查看消息通知" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_a">
+      <mxGeometry x="30" y="185" width="160" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MODULE B: 物品模块  (青色区域)
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="mod_b" value="物品模块" style="swimlane;startSize=25;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="240" y="330" width="220" height="270" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_publish" value="发布物品" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="mod_b">
+      <mxGeometry x="30" y="35" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_browse" value="浏览物品列表" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="mod_b">
+      <mxGeometry x="30" y="85" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_detail" value="查看物品详情" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="mod_b">
+      <mxGeometry x="30" y="135" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_fav" value="收藏 / 取消收藏" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="mod_b">
+      <mxGeometry x="30" y="185" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_mypub" value="查看我的发布" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="mod_b">
+      <mxGeometry x="30" y="235" width="160" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- 上传图片 (include) -->
+    <mxCell id="uc_upload" value="上传图片" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="500" y="340" width="140" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- include: 发布物品 → 上传图片 -->
+    <mxCell id="inc_upload" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#666666;dashed=1;strokeWidth=1.2;" edge="1" source="uc_publish" target="uc_upload" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="inc_upload_lbl" value="«include»" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" vertex="1" connectable="0" parent="inc_upload">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- MinIO 连线: 上传图片 → MinIO -->
+    <mxCell id="edge_minio" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#b85450;dashed=1;strokeWidth=1;" edge="1" source="uc_upload" target="actor_minio" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="edge_minio_lbl" value="图片存储" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#b85450;" vertex="1" connectable="0" parent="edge_minio">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MODULE C: 订单模块  (橙色区域)
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="mod_c" value="订单模块" style="swimlane;startSize=25;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="240" y="620" width="220" height="170" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_order" value="提交认领订单" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="mod_c">
+      <mxGeometry x="30" y="35" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_cancel" value="取消订单" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="mod_c">
+      <mxGeometry x="30" y="85" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_done" value="完成订单" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="mod_c">
+      <mxGeometry x="30" y="135" width="160" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MODULE D: 积分与礼品  (粉色区域)
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="mod_d" value="积分与礼品模块" style="swimlane;startSize=25;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="240" y="810" width="220" height="220" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_checkin" value="签到获取积分" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" vertex="1" parent="mod_d">
+      <mxGeometry x="30" y="35" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_gift_browse" value="浏览礼品商城" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" vertex="1" parent="mod_d">
+      <mxGeometry x="30" y="85" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_exchange" value="兑换礼品" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" vertex="1" parent="mod_d">
+      <mxGeometry x="30" y="135" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_exchange_log" value="查看兑换记录" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" vertex="1" parent="mod_d">
+      <mxGeometry x="30" y="185" width="160" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- 积分校验 (include) -->
+    <mxCell id="uc_point_check" value="积分校验" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="500" y="930" width="140" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- include: 兑换礼品 → 积分校验 -->
+    <mxCell id="inc_point" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#666666;dashed=1;strokeWidth=1.2;" edge="1" source="uc_exchange" target="uc_point_check" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="inc_point_lbl" value="«include»" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" vertex="1" connectable="0" parent="inc_point">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MODULE E: 回收点与排行榜
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="mod_e" value="回收点与排行榜" style="swimlane;startSize=25;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="500" y="90" width="220" height="120" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_droppoint" value="查看回收点" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="mod_e">
+      <mxGeometry x="30" y="35" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_rank" value="查看排行榜" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="mod_e">
+      <mxGeometry x="30" y="85" width="160" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         ACTOR → USE CASE EDGES  (普通用户)
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="e_user_mod_a" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#6c8ebf;strokeWidth=1;" edge="1" source="actor_user" target="mod_a" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_user_mod_b" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#6c8ebf;strokeWidth=1;" edge="1" source="actor_user" target="mod_b" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_user_mod_c" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#6c8ebf;strokeWidth=1;" edge="1" source="actor_user" target="mod_c" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_user_mod_d" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#6c8ebf;strokeWidth=1;" edge="1" source="actor_user" target="mod_d" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_user_mod_e" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#6c8ebf;strokeWidth=1;" edge="1" source="actor_user" target="mod_e" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Redis → 登录 -->
+    <mxCell id="e_redis_login" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#b85450;dashed=1;strokeWidth=1;" edge="1" source="actor_redis" target="uc_login" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_redis_lbl" value="会话缓存" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#b85450;" vertex="1" connectable="0" parent="e_redis_login">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MODULE F: 管理端公共 — 数据看板 & 登录
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="mod_f" value="管理端公共" style="swimlane;startSize=25;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="780" y="90" width="220" height="120" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_admin_login" value="登录管理端" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;" vertex="1" parent="mod_f">
+      <mxGeometry x="30" y="35" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_dashboard" value="查看数据看板" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;" vertex="1" parent="mod_f">
+      <mxGeometry x="30" y="85" width="160" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MODULE G: 物品审核（校区管理员）
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="mod_g" value="物品审核管理（本校区）" style="swimlane;startSize=25;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="780" y="240" width="230" height="220" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_review_list" value="查询待审核物品" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_g">
+      <mxGeometry x="30" y="35" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_review_pass" value="审核物品（通过/驳回）" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_g">
+      <mxGeometry x="30" y="85" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_review_down" value="强制下架物品" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_g">
+      <mxGeometry x="30" y="135" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_review_note" value="填写审核说明" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_g">
+      <mxGeometry x="30" y="185" width="170" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MODULE H: 回收点管理（校区管理员）
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="mod_h" value="回收点管理（本校区）" style="swimlane;startSize=25;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="780" y="490" width="230" height="170" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_dp_query" value="查询回收点" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_h">
+      <mxGeometry x="30" y="35" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_dp_edit" value="新增 / 编辑回收点" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_h">
+      <mxGeometry x="30" y="85" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_dp_status" value="启用 / 禁用回收点" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_h">
+      <mxGeometry x="30" y="135" width="170" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MODULE I: 用户管理（校区管理员）
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="mod_i" value="用户管理（本校区）" style="swimlane;startSize=25;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="780" y="690" width="230" height="220" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_user_query" value="查询用户" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_i">
+      <mxGeometry x="30" y="35" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_user_detail" value="查看用户详情" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_i">
+      <mxGeometry x="30" y="85" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_user_edit" value="新增 / 编辑用户" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_i">
+      <mxGeometry x="30" y="135" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_user_del" value="禁用 / 删除用户" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="mod_i">
+      <mxGeometry x="30" y="185" width="170" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- 校区权限校验 (include) -->
+    <mxCell id="uc_campus_auth" value="校区权限校验" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="1060" y="570" width="160" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- include: 物品审核 → 校区权限校验 -->
+    <mxCell id="inc_auth1" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#666666;dashed=1;strokeWidth=1.2;" edge="1" source="mod_g" target="uc_campus_auth" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="inc_auth1_lbl" value="«include»" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" vertex="1" connectable="0" parent="inc_auth1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- include: 回收点管理 → 校区权限校验 -->
+    <mxCell id="inc_auth2" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#666666;dashed=1;strokeWidth=1.2;" edge="1" source="mod_h" target="uc_campus_auth" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="inc_auth2_lbl" value="«include»" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" vertex="1" connectable="0" parent="inc_auth2">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- include: 用户管理 → 校区权限校验 -->
+    <mxCell id="inc_auth3" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#666666;dashed=1;strokeWidth=1.2;" edge="1" source="mod_i" target="uc_campus_auth" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="inc_auth3_lbl" value="«include»" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" vertex="1" connectable="0" parent="inc_auth3">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MODULE J: 超级管理员专属
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="mod_j" value="超级管理员专属功能" style="swimlane;startSize=25;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=12;fontStyle=1;dashed=0;" vertex="1" parent="1">
+      <mxGeometry x="1060" y="90" width="230" height="430" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_campus_mgr" value="校区管理 (CRUD)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="mod_j">
+      <mxGeometry x="30" y="35" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_admin_mgr" value="管理员账号管理" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="mod_j">
+      <mxGeometry x="30" y="85" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_gift_list" value="礼品列表 / 新增 / 编辑" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="mod_j">
+      <mxGeometry x="30" y="145" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_gift_shelf" value="礼品上架 / 下架" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="mod_j">
+      <mxGeometry x="30" y="195" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_gift_img" value="礼品图片上传" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="mod_j">
+      <mxGeometry x="30" y="245" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_verify" value="兑换记录核销" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="mod_j">
+      <mxGeometry x="30" y="295" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="uc_cross_campus" value="跨校区数据查看" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="mod_j">
+      <mxGeometry x="30" y="345" width="170" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- 超级管理员角色校验 (include) -->
+    <mxCell id="uc_super_auth" value="超级管理员角色校验" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="1060" y="660" width="190" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- include: mod_j → 超级管理员角色校验 -->
+    <mxCell id="inc_super" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#d6b656;dashed=1;strokeWidth=1.2;" edge="1" source="mod_j" target="uc_super_auth" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="inc_super_lbl" value="«include»" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" vertex="1" connectable="0" parent="inc_super">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- include: 礼品图片上传 → MinIO -->
+    <mxCell id="e_gift_img_minio" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#b85450;dashed=1;strokeWidth=1;" edge="1" source="uc_gift_img" target="actor_minio" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_gift_img_minio_lbl" value="图片存储" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#b85450;" vertex="1" connectable="0" parent="e_gift_img_minio">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         ACTOR → MODULE EDGES (校区管理员)
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="e_ca_f" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#82b366;strokeWidth=1;" edge="1" source="actor_campus_admin" target="mod_f" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_ca_g" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#82b366;strokeWidth=1;" edge="1" source="actor_campus_admin" target="mod_g" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_ca_h" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#82b366;strokeWidth=1;" edge="1" source="actor_campus_admin" target="mod_h" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_ca_i" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#82b366;strokeWidth=1;" edge="1" source="actor_campus_admin" target="mod_i" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         ACTOR → MODULE EDGES (超级管理员，继承校区管理员全部 + 额外)
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="e_sa_f" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#d6b656;strokeWidth=1;" edge="1" source="actor_super_admin" target="mod_f" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_sa_g" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#d6b656;strokeWidth=1;" edge="1" source="actor_super_admin" target="mod_g" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_sa_h" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#d6b656;strokeWidth=1;" edge="1" source="actor_super_admin" target="mod_h" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_sa_i" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#d6b656;strokeWidth=1;" edge="1" source="actor_super_admin" target="mod_i" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_sa_j" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;strokeColor=#d6b656;strokeWidth=1.5;" edge="1" source="actor_super_admin" target="mod_j" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════
+         NOTES / CONSTRAINTS
+    ═══════════════════════════════════════════════════════ -->
+    <mxCell id="note1" value="&lt;b&gt;校区数据隔离约束&lt;/b&gt;&#xa;校区管理员仅可操作所属校区数据；&#xa;越权操作系统返回 403 权限错误。" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;" vertex="1" parent="1">
+      <mxGeometry x="780" y="950" width="230" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="note2" value="&lt;b&gt;写操作二次确认&lt;/b&gt;&#xa;所有写操作（上下架、核销、删除）&#xa;均需对话框二次确认。" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;" vertex="1" parent="1">
+      <mxGeometry x="1060" y="780" width="230" height="80" as="geometry" />
+    </mxCell>
+
+    <!-- connect note1 to campus_auth -->
+    <mxCell id="e_note1" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#d6b656;dashed=1;" edge="1" source="note1" target="uc_campus_auth" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_note2" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#d6b656;dashed=1;" edge="1" source="note2" target="uc_super_auth" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+  </root>
+</mxGraphModel>
