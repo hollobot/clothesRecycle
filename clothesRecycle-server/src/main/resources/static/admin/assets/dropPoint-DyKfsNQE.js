@@ -1,0 +1,1 @@
+import{r as o}from"./request-DPYp5KOp.js";const s=t=>o.get("/api/admin/drop-points",{params:{campusId:t}}),n=t=>o.post("/api/admin/drop-points",t),i=(t,p)=>o.put(`/api/admin/drop-points/${t}`,p),r=(t,p)=>o.post(`/api/admin/drop-points/${t}/status`,null,{params:{enabled:p}});export{n as a,r as c,s as g,i as u};

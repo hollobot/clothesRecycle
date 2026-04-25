@@ -6,7 +6,10 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueDevTools()],
+  plugins: [
+    vue(),
+    // vueDevTools()
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -24,5 +27,10 @@ export default defineConfig({
     strictPort: false,
     // 可选：允许跨域（开发环境常用，非必须）
     cors: true,
+  },
+  base: '/admin',
+  build: {
+    outDir: '../clothesRecycle-server/src/main/resources/static/admin',
+    emptyOutDir: false,
   },
 })

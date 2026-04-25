@@ -6,7 +6,10 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueDevTools()],
+  plugins: [
+    vue(),
+    // vueDevTools()
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -23,5 +26,16 @@ export default defineConfig({
     strictPort: false,
     // 可选：允许跨域（开发环境常用，非必须）
     cors: true,
+  },
+  base: '/',
+  // ↑ client 部署在根路径，base 保持默认 '/' 即可
+
+  build: {
+    // 打包输出目录：直接输出到 server 项目的 static 根目录
+    outDir: '../clothesRecycle-server/src/main/resources/static',
+
+    // 每次构建前清空输出目录
+    // 注意：设为 false，避免误删 admin 目录！
+    emptyOutDir: false,
   },
 })

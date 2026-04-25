@@ -1,0 +1,83 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+
+spring:
+  application:
+    name: clothesRecycle-server
+  servlet:
+    multipart:
+      # 单张图片上传上限，和业务规则保持一致。
+      max-file-size: 5MB
+      # 一次最多上传 6 张图片，预留一定请求体开销。
+      max-request-size: 30MB
+  datasource:
+    url: jdbc:mysql://localhost:3306/clothes_recycle
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: localhost
+      password: 123456
+      port: 6379
+      database: 0
+      timeout: 3s
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      id-type: auto
+  configuration:
+    # 开发环境打印 SQL，生产环境注释掉
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+
+# Sa-Token 配置
+sa-token:
+  token-name: Authorization
+  timeout: 86400        # token 有效期（秒），默认 1 天
+  active-timeout: -1    # -1 表示不启用活跃超时
+  is-concurrent: true   # 允许同账号多地登录
+  is-share: true        # 同账号多地登录共享 token
+  token-style: uuid
+  is-log: false
+  is-read-header: true  # 从请求头读取 Token
+  is-read-cookie: false # 关闭 Cookie 读取，统一走 Header
+  # Token 与 Session 存储由 SaTokenRedisDaoConfig 接管，统一落 Redis。
+
+minio:
+  endpoint: http://192.168.30.129:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: clothes-recycle
+
+cors:
+  # 本地开发示例，可按需替换为前端真实域名
+  allowed-origins:
+    - "*"
+    - http://localhost:5173
+    - http://localhost:5174
+    - http://127.0.0.1:5173
+    - http://127.0.0.1:5174
+  allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    - OPTIONS
+  allowed-headers:
+    - Content-Type
+    - Authorization
+    - X-Requested-With
+    - Accept
+    - Origin
+  exposed-headers:
+    - Authorization
+  max-age: 3600
+  allow-credentials: false

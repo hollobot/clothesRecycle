@@ -1,0 +1,1 @@
+import{r as a}from"./request-DPYp5KOp.js";const t=()=>a.get("/api/super/campuses"),u=()=>a.get("/api/public/campus/list"),c=s=>a.post("/api/super/campuses",s),m=(s,p)=>a.put(`/api/super/campuses/${s}`,p),o=(s,p)=>a.post(`/api/super/campuses/${s}/status`,null,{params:{enabled:p}}),r=s=>a.delete(`/api/super/campuses/${s}`);export{c as a,u as b,o as c,r as d,t as g,m as u};

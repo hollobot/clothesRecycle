@@ -5,12 +5,7 @@ import axios from 'axios'
  */
 const DEV_DEFAULT_API_BASE_URL = 'http://localhost:8080'
 
-/**
- * 规范化 API 地址，去掉尾部斜杠，避免出现 //api 路径。
- */
-const normalizeBaseUrl = (url) => String(url || '').trim().replace(/\/+$/, '')
-
-const envBaseUrl = normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL)
+const envBaseUrl = import.meta.env.VITE_API_BASE_URL || DEV_DEFAULT_API_BASE_URL
 
 /**
  * 企业级环境策略：

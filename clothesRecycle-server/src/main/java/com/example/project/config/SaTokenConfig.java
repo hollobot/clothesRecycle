@@ -4,6 +4,7 @@ import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.stp.StpUtil;
+import com.example.project.handler.interceptor.SpaInterceptor;
 import com.example.project.mapper.AdminMapper;
 import com.example.project.model.po.Admin;
 import com.example.project.utils.LogMaskUtil;
@@ -30,9 +31,12 @@ public class SaTokenConfig implements WebMvcConfigurer {
     private static final String TOKEN_HEADER = "Authorization";
     @Autowired(required = false)
     private AdminMapper adminMapper;
+    @Autowired
+    private SpaInterceptor spaInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(spaInterceptor);
         registry.addInterceptor(new ApiPrefixAuthInterceptor()).addPathPatterns("/api/**");
     }
 

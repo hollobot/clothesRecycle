@@ -1,156 +1,162 @@
 # AGENTS 指南（clothesRecycle Monorepo）
 
-本文件适用于在 `D:\23809\Desktop\ai\clothesRecycle` 目录执行任务的代理式编码助手。
-目标：快速定位子项目、按真实可执行命令验证、以最小改动交付稳定结果。
+适用范围：`D:\23809\Desktop\ai\clothesRecycle`
+目标：帮助代理式编码助手快速定位子项目、遵循现有约定、用真实可执行命令完成验证。
 
-## 1. 仓库结构与技术栈
-- `clothesRecycle-client/`：用户端前端（Vue 3 + Vite + Pinia + Vue Router + Axios）。
-- `clothesRecycle-admin/`：管理端前端（Vue 3 + Vite + Pinia + Vue Router + Axios + ECharts）。
-- `clothesRecycle-server/`：后端（Spring Boot 3.2.5 + MyBatis-Plus + Sa-Token + Redis + MinIO）。
-- 根目录是聚合目录，不提供统一构建脚本；命令需在子目录执行或使用前缀/`-f`。
+## 1. 仓库结构
+- `clothesRecycle-client/`：用户端前端，Vue 3 + Vite + Pinia + Vue Router + Axios + Element Plus。
+- `clothesRecycle-admin/`：管理端前端，Vue 3 + Vite + Pinia + Vue Router + Axios + Element Plus + ECharts。
+- `clothesRecycle-server/`：后端，Spring Boot 3.2.5 + MyBatis-Plus + Sa-Token + Redis + MinIO。
+- 根目录是聚合目录，没有统一的 `package.json` 或根 `pom.xml` 作为主入口。
+- `clothesRecycle-server/bin/` 下存在独立文件，但默认不作为主要开发入口；优先修改正式源码目录。
 
-## 2. Cursor / Copilot 规则状态（已核对）
+## 2. 规则文件扫描结果
 已检查以下位置：
 - `.cursor/rules/`
 - `.cursorrules`
 - `.github/copilot-instructions.md`
 
-当前仓库未发现上述规则文件。
+当前仓库未发现上述 Cursor / Copilot 规则文件。
 若后续新增，必须优先遵循，并同步更新本文件。
 
-## 3. 通用执行原则
-- 最小改动：只修改与当前需求直接相关的文件。
-- 先读后改：先阅读目标模块及其直接依赖，再实施变更。
-- 不混入无关重构，不引入无关依赖，不提交任何敏感信息。
+## 3. 总体执行原则
+- 先确认目标子项目，再进入对应目录执行命令。
+- 先读相关代码和子项目 `AGENTS.md`，再做最小必要改动。
+- 不混入无关重构，不随意改目录结构，不引入无关依赖。
+- 不提交密钥、令牌、真实账号密码、`.env` 敏感配置。
+- 前端改动至少做构建验证；后端改动至少运行受影响测试。
 
-## 4. Build / Lint / Test 命令（重点含单测）
-默认建议先进入对应子项目目录执行。
-若在根目录执行，请使用：
-- 前端：`npm --prefix <subdir> run <script>`
-- 后端：`mvn -f clothesRecycle-server/pom.xml <goal>`
+## 4. 根目录等价命令
+建议直接在子项目目录执行；若必须在根目录执行，可使用：
+- 用户端安装依赖：`npm --prefix clothesRecycle-client install`
+- 用户端构建：`npm --prefix clothesRecycle-client run build`
+- 管理端安装依赖：`npm --prefix clothesRecycle-admin install`
+- 管理端构建：`npm --prefix clothesRecycle-admin run build`
+- 后端编译：`mvn -f clothesRecycle-server/pom.xml clean compile`
+- 后端全量测试：`mvn -f clothesRecycle-server/pom.xml test`
+- 后端单个测试类：`mvn -f clothesRecycle-server/pom.xml -Dtest=UserAdminControllerTest test`
+- 后端单个测试方法：`mvn -f clothesRecycle-server/pom.xml -Dtest=UserAdminControllerTest#should_create_user_when_request_valid test`
 
-### 4.1 clothesRecycle-client（用户端）
+## 5. clothesRecycle-client（用户端）
+### 5.1 构建与开发命令
+在 `clothesRecycle-client/` 目录执行：
 - 安装依赖：`npm install`
 - 本地开发：`npm run dev`
 - 生产构建：`npm run build`
 - 预览构建：`npm run preview`
 - 代码格式化：`npm run format`
 
-Lint/Test 现状：
-- 无 `lint`/`test` 脚本，未发现前端测试文件，当前无法运行单测。
+### 5.2 Lint / Test 现状
+- `package.json` 仅包含 `dev`、`build`、`preview`、`format` 脚本。
+- 当前没有 `lint` 脚本，也未发现 ESLint 配置。
+- 当前没有 `test` 脚本，也未发现 `src/**/*.test.*` 或 `src/**/*.spec.*` 测试文件。
+- 因此当前用户端无法运行全量测试或单个测试。
 
-### 4.2 clothesRecycle-admin（管理端）
+### 5.3 用户端代码风格
+- 语言保持 JavaScript，不擅自迁移 TypeScript。
+- 优先使用 Vue SFC + `<script setup>`，并保持目标文件原有块顺序。
+- 路径别名 `@` 指向 `src`，跨目录引用优先 `@/`。
+- 格式化遵循 `.prettierrc.json`：`semi: false`、`singleQuote: true`、`printWidth: 100`。
+- import 顺序：第三方依赖 -> `@/` 模块 -> 相对路径模块。
+- 合并同源导入，删除未使用导入，避免无语义的大范围重排。
+- 组件文件使用 `PascalCase.vue`，页面组件优先 `*View.vue`。
+- store 命名使用 `useXxxStore`，变量和函数使用 `camelCase`。
+- 布尔命名优先 `is/has/can` 前缀，常量按需使用 `UPPER_SNAKE_CASE`。
+- 路由参数中的数值字段显式转成 `Number(...)`。
+- 读取本地存储 JSON 时必须处理空值与解析失败。
+- 统一复用 `src/api/request.js`，禁止在业务页重复 `axios.create`。
+- 登录态键名沿用 `client_token`、`client_profile`，不要擅自改名。
+- 请求成功返回 `payload.data ?? payload`；`payload.code !== 200` 时按现有拦截器逻辑 reject。
+- 提交、删除、支付、状态切换等关键异步流程优先补 `try/catch`，错误信息面向用户。
+
+## 6. clothesRecycle-admin（管理端）
+### 6.1 构建与开发命令
+在 `clothesRecycle-admin/` 目录执行：
 - 安装依赖：`npm install`
 - 本地开发：`npm run dev`
 - 生产构建：`npm run build`
 - 预览构建：`npm run preview`
 - 代码格式化：`npm run format`
 
-Lint/Test 现状：
-- 无 `lint`/`test` 脚本，未发现前端测试文件，当前无法运行单测。
+### 6.2 Lint / Test 现状
+- `package.json` 仅包含 `dev`、`build`、`preview`、`format` 脚本。
+- 当前没有 `lint` 脚本，也未发现 ESLint 配置。
+- 当前没有 `test` 脚本，也未发现 `src/**/*.test.*` 或 `src/**/*.spec.*` 测试文件。
+- 因此当前管理端无法运行全量测试或单个测试。
 
-### 4.3 clothesRecycle-server（后端）
+### 6.3 管理端代码风格
+- 与用户端一致，保持 JavaScript + Vue 3 现有写法。
+- 默认使用 `<script setup>`，路由组件优先延续现有懒加载模式。
+- 路径别名、Prettier 规则、import 顺序与用户端保持一致。
+- 组件命名使用 `PascalCase`，路由路径使用 kebab-case。
+- 统一走 `src/api/request.js`，不要在页面中直接写裸 `axios` 请求。
+- 登录态键名沿用 `admin_token`、`admin_profile`。
+- 本地存储 JSON 读取要兜底，避免脏数据导致页面异常。
+- 对后端非 200 业务码沿用拦截器 reject 机制，不要静默吞错。
+- 涉及鉴权、登录态失效、角色判断的逻辑，要与全局路由守卫和 `admin` store 保持一致。
+
+## 7. clothesRecycle-server（后端）
+### 7.1 构建与运行命令
+在 `clothesRecycle-server/` 目录执行：
 - 启动服务：`mvn spring-boot:run`
 - 编译：`mvn clean compile`
 - 打包（跳过测试）：`mvn clean package -DskipTests`
 - 提交前推荐：`mvn clean verify`
 
-测试命令（当前可执行）：
+### 7.2 测试命令（重点）
 - 全量测试：`mvn test`
 - 单个测试类：`mvn -Dtest=GlobalExceptionHandlerTest test`
 - 单个测试方法：`mvn -Dtest=GlobalExceptionHandlerTest#should_return_400_when_validation_failed test`
-- 同类多方法（通配）：`mvn -Dtest=ApiPrefixAndRoleTest#should_reject_* test`
+- 同类多方法：`mvn -Dtest=ApiPrefixAndRoleTest#should_reject_* test`
 - 多测试类：`mvn -Dtest=GlobalExceptionHandlerTest,ApiPrefixAndRoleTest test`
 
-已发现后端测试目录：
+### 7.3 后端测试现状
+当前已发现测试位于：
 - `src/test/java/com/example/project/exception`
 - `src/test/java/com/example/project/security`
-- `src/test/java/com/example/project/controller`
+- `src/test/java/com/example/project/controller/admin`
 - `src/test/java/com/example/project/service`
 
-Lint/静态检查现状：
-- `pom.xml` 未配置 Checkstyle / SpotBugs / PMD / Spotless。
-- 当前质量门禁以 `mvn clean verify` + 代码评审为主。
+当前 `pom.xml` 未配置 Checkstyle、SpotBugs、PMD、Spotless 等静态检查插件。
+后端当前质量门禁以 `mvn clean verify` + 代码评审为主。
 
-### 4.4 根目录等价命令示例
-- 构建用户端：`npm --prefix clothesRecycle-client run build`
-- 构建管理端：`npm --prefix clothesRecycle-admin run build`
-- 后端全测：`mvn -f clothesRecycle-server/pom.xml test`
-- 后端单测类：`mvn -f clothesRecycle-server/pom.xml -Dtest=UserAdminControllerTest test`
-- 后端单测方法：`mvn -f clothesRecycle-server/pom.xml -Dtest=UserAdminControllerTest#should_* test`
-
-## 5. 前端代码风格（client/admin 通用）
-基础规范：
-- 语言为 JavaScript（当前未启用 TypeScript），默认沿用 JS。
-- Vue SFC 优先使用 `<script setup>`，并保持目标文件既有块顺序。
-- 路径别名 `@` 指向 `src`，跨目录依赖优先 `@/`。
-- Prettier 规则：`semi: false`、`singleQuote: true`、`printWidth: 100`。
-
-Imports 规范：
-- 顺序：第三方依赖 -> `@/` 模块 -> 相对路径模块。
-- 合并同源导入，删除未使用导入。
-- 不做无语义的全文件 import 重排。
-
-命名规范：
-- 组件文件：`PascalCase.vue`，页面组件建议 `*View.vue`。
-- Store：`useXxxStore`。
-- 变量/函数用 `camelCase`，布尔使用 `is/has/can` 前缀，常量按需用 `UPPER_SNAKE_CASE`。
-
-类型与数据处理：
-- 路由参数中的数值字段做显式转换（如 `Number(...)`）。
-- 本地存储 JSON 读取必须处理空值和解析失败。
-- 避免透传不透明大对象，优先传递明确字段。
-
-API 与错误处理：
-- 统一复用 `src/api/request.js`，禁止在业务页重复 `axios.create`。
-- 用户端登录态键：`client_token` / `client_profile`。
-- 管理端登录态键：`admin_token` / `admin_profile`。
-- 响应约定：`payload.code !== 200` 时 reject，成功返回 `payload.data ?? payload`。
-- 关键流程（提交/删除/审核/支付/状态切换）补充 `try/catch`，错误提示面向用户。
-
-## 6. 后端代码风格（server）
-基础规范：
+### 7.4 后端代码风格
 - Java 17，4 空格缩进，禁止 Tab。
 - 保持分层边界：`controller -> service -> mapper`，禁止 controller 直调 mapper。
-- 统一返回 `Result<T>` + `ResultCode`，避免返回裸对象/裸 `Map`。
-- 业务失败统一抛 `BusinessException`，由 `GlobalExceptionHandler` 转换响应。
-
-Imports 与命名：
-- 禁止 `import xxx.*`。
-- 推荐分组：JDK -> 第三方 -> `com.example.project...` -> 静态导入。
-- 类名按职责后缀：`*Controller`、`*Service`、`*ServiceImpl`、`*Mapper`、`*Dto`、`*Vo`。
-- 方法名使用 `camelCase` 且动词开头，测试方法建议 `should_xxx_when_yyy`。
-
-类型与建模：
+- 统一返回 `Result<T>` + `ResultCode`，不要返回裸对象或裸 `Map`。
+- 业务失败统一抛 `BusinessException`，由 `GlobalExceptionHandler` 转成标准响应。
+- import 禁止使用通配符；推荐分组为 JDK -> 第三方 -> `com.example.project...` -> 静态导入。
+- 删除未使用 import，不做无意义的全文件整理。
+- 类名按职责使用 `*Controller`、`*Service`、`*ServiceImpl`、`*Mapper`、`*Dto`、`*Vo`。
+- 方法名使用 `camelCase` 且动词开头，测试方法优先 `should_xxx_when_yyy`。
 - 严格区分 DTO / VO / PO，不跨层混用。
-- DTO 使用 `jakarta.validation` 注解，Controller 可校验入参默认加 `@Valid`。
-- 查询条件优先 `LambdaQueryWrapper`，提升类型安全与可维护性。
+- DTO 字段优先使用 `jakarta.validation` 注解，`@RequestBody` 入参可校验时默认加 `@Valid`。
+- 查询条件优先 `LambdaQueryWrapper`，避免硬编码字段字符串。
+- 不吞异常；业务可预期错误抛 `BusinessException`，系统异常交给全局异常处理。
+- 日志避免泄露敏感信息，延续 `LogMaskUtil` 脱敏约定。
+- 控制层测试优先延续 `@WebMvcTest + MockMvc` 现有模式，断言优先校验统一响应体中的 `code`、`msg`、`data`。
 
-异常与日志：
-- 不吞异常；可预期业务问题抛 `BusinessException`。
-- 全局异常处理器统一输出标准响应结构。
-- 日志避免泄露敏感数据，按需使用脱敏工具（如 `LogMaskUtil`）。
+## 8. 变更与验证流程
+- 第一步：确认需求落在 client、admin、server 中的哪一个子项目。
+- 第二步：优先阅读目标子项目自己的 `AGENTS.md` 与相邻模块实现。
+- 第三步：按最小改动实现，避免把重构和功能修改混在一起。
+- 第四步：前端至少运行 `npm run build`；后端至少运行受影响测试，必要时补 `mvn clean verify`。
+- 第五步：交付说明写清改动文件、验证命令、结果和当前仓库限制。
 
-## 7. 变更与验证流程（推荐）
-- 第一步：确认目标子项目与影响范围。
-- 第二步：阅读对应子项目 `AGENTS.md` 与相关代码。
-- 第三步：按最小改动实现，并自检 imports/命名/异常处理。
-- 第四步：执行验证（前端至少 `npm run build`；后端至少运行受影响测试）。
-- 第五步：交付说明写明改动内容、验证命令、限制与风险。
+## 9. 提交前检查清单
+- 只修改了与当前任务直接相关的文件。
+- 清理未使用导入、调试输出、临时日志、无效注释。
+- 前端改动已完成构建验证。
+- 后端改动已运行受影响单测或说明无法运行的原因。
+- 回复中明确说明当前仓库真实的 lint/test 可用状态。
 
-## 8. 提交前检查清单
-- 只改了与需求相关的文件。
-- 清理了未使用导入、调试代码、临时日志。
-- 前端改动至少构建通过（`npm run build`）。
-- 后端改动至少运行受影响单测（类或方法级）。
-- 明确说明仓库当前 lint/test 的真实可用状态。
-
-## 9. 与子项目 AGENTS.md 的优先级
-- 本文件是仓库级总规范。
-- 更具体规则优先，子项目文档高于本文件同类条目：
+## 10. 优先级说明
+- 根目录 `AGENTS.md` 提供全仓库通用规范。
+- 更具体的子项目文档优先于本文件同类条目：
   - `clothesRecycle-client/AGENTS.md`
   - `clothesRecycle-admin/AGENTS.md`
   - `clothesRecycle-server/AGENTS.md`
+- 若未来出现 Cursor / Copilot 规则文件，更具体规则优先于 AGENTS。
 
 ---
-维护建议：新增 lint/test 或新增 Cursor/Copilot 规则后，立即同步更新本文件。
+维护建议：当脚本、测试框架、静态检查或规则文件发生变化时，立即同步更新本文件。

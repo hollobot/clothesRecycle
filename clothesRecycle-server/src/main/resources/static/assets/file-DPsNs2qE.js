@@ -1,0 +1,1 @@
+import{r}from"./request-DeZ4SDFB.js";const s=e=>{const a=new FormData;return e.forEach(t=>{a.append("files",t)}),r.post("/api/user/files/images",a,{headers:{"Content-Type":"multipart/form-data"}})};export{s as u};
