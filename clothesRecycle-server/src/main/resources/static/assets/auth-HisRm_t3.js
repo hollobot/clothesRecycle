@@ -1,1 +1,0 @@
-import{r as t}from"./request-CWUMT0Eh.js";const o=s=>t.post("/api/public/auth/sms",{phone:s}),p=s=>t.post("/api/public/auth/register",s),a=s=>t.post("/api/public/auth/login",s);export{a as l,p as r,o as s};

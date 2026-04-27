@@ -31,6 +31,6 @@ export default defineConfig({
   base: '/admin',
   build: {
     outDir: '../clothesRecycle-server/src/main/resources/static/admin',
-    emptyOutDir: false,
+    emptyOutDir: true,
   },
 })
