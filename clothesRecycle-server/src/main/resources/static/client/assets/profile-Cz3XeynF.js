@@ -1,0 +1,1 @@
+import{r as s}from"./request-BR62hiVM.js";const o=()=>s.get("/api/user/profile/overview"),a=()=>s.get("/api/user/profile"),p=e=>s.put("/api/user/profile",e),t=e=>s.post("/api/user/profile/password",e),i=()=>s.post("/api/user/profile/password/sms/send"),u=e=>s.post("/api/user/profile/password/sms/reset",e);export{a,t as c,o as g,u as r,i as s,p as u};

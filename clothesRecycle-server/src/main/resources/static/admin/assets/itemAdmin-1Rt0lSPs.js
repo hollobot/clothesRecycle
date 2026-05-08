@@ -1,1 +1,0 @@
-import{r as t}from"./request-DPYp5KOp.js";const m=a=>t.get("/api/admin/items",{params:{status:a}}),n=a=>t.get(`/api/admin/items/${a}`),o=(a,s,e)=>t.post(`/api/admin/items/${a}/audit`,null,{params:{approved:s,reason:e}}),p=(a,s)=>t.post(`/api/admin/items/${a}/force-off-shelf`,null,{params:{reason:s}});export{o as a,n as b,p as f,m as g};

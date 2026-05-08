@@ -1,0 +1,67 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="物品发布与审核" id="j4rgQ1wKRLJX7o2KE5G_">
+    <mxGraphModel dx="1414" dy="777" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="haQv6VPBTjK44WdCHZJP-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=14;fontStyle=1;" value="开始" vertex="1">
+          <mxGeometry height="44" width="120" x="310" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="用户填写物品信息提交" vertex="1">
+          <mxGeometry height="48" width="178" x="281" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-20" edge="1" parent="1" source="haQv6VPBTjK44WdCHZJP-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="haQv6VPBTjK44WdCHZJP-4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="物品进入待审核状态" vertex="1">
+          <mxGeometry height="46" width="178" x="281" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-4" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="管理员审核？" vertex="1">
+          <mxGeometry height="80" width="160" x="290" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="物品已驳回，用户可修改后重新提交" vertex="1">
+          <mxGeometry height="60" width="178" x="90" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="物品已上架，广场公开浏览" vertex="1">
+          <mxGeometry height="46" width="178" x="490" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-7" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="下架操作？" vertex="1">
+          <mxGeometry height="80" width="160" x="499" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="物品已取消" vertex="1">
+          <mxGeometry height="46" width="178" x="491" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=14;fontStyle=1;" value="结束" vertex="1">
+          <mxGeometry height="44" width="120" x="281" y="921" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-10" edge="1" parent="1" source="haQv6VPBTjK44WdCHZJP-1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="haQv6VPBTjK44WdCHZJP-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-11" edge="1" parent="1" source="haQv6VPBTjK44WdCHZJP-2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="haQv6VPBTjK44WdCHZJP-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-12" edge="1" parent="1" source="haQv6VPBTjK44WdCHZJP-3" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="haQv6VPBTjK44WdCHZJP-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-13" edge="1" parent="1" source="haQv6VPBTjK44WdCHZJP-4" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontSize=11;" target="haQv6VPBTjK44WdCHZJP-5" value="不通过">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-14" edge="1" parent="1" source="haQv6VPBTjK44WdCHZJP-4" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontSize=11;" target="haQv6VPBTjK44WdCHZJP-6" value="通过">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-16" edge="1" parent="1" source="haQv6VPBTjK44WdCHZJP-6" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="haQv6VPBTjK44WdCHZJP-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-17" edge="1" parent="1" source="haQv6VPBTjK44WdCHZJP-7" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontSize=11;" target="haQv6VPBTjK44WdCHZJP-8" value="是（主动/强制）">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-18" edge="1" parent="1" source="haQv6VPBTjK44WdCHZJP-7" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontSize=11;" target="haQv6VPBTjK44WdCHZJP-9" value="否">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="haQv6VPBTjK44WdCHZJP-19" edge="1" parent="1" source="haQv6VPBTjK44WdCHZJP-8" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="haQv6VPBTjK44WdCHZJP-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,78 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="管理端权限与后台管理" id="4Y9pu3DaZO0dg8rgs21c">
+    <mxGraphModel dx="1414" dy="777" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="0SZ4mY3R5xstef80CQR6-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=14;fontStyle=1;" value="开始" vertex="1">
+          <mxGeometry height="44" width="120" x="350" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="管理员登录，输入账号密码" vertex="1">
+          <mxGeometry height="48" width="178" x="321" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-3" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="验证账号密码？" vertex="1">
+          <mxGeometry height="80" width="160" x="330" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="提示错误信息" vertex="1">
+          <mxGeometry height="46" width="178" x="130" y="464" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="按权限分配数据范围（超级：全局/校区：绑定校区）" vertex="1">
+          <mxGeometry height="60" width="178" x="530" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="执行管理操作（用户/物品/礼品/校区管理，记录日志）" vertex="1">
+          <mxGeometry height="60" width="178" x="530" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-7" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="权限越界？" vertex="1">
+          <mxGeometry height="80" width="160" x="539" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="系统直接拒绝操作" vertex="1">
+          <mxGeometry height="46" width="178" x="750" y="890" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="操作完成" vertex="1">
+          <mxGeometry height="46" width="178" x="531" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-10" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=14;fontStyle=1;" value="结束" vertex="1">
+          <mxGeometry height="44" width="120" x="159" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-11" edge="1" parent="1" source="0SZ4mY3R5xstef80CQR6-1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="0SZ4mY3R5xstef80CQR6-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-12" edge="1" parent="1" source="0SZ4mY3R5xstef80CQR6-2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="0SZ4mY3R5xstef80CQR6-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-13" edge="1" parent="1" source="0SZ4mY3R5xstef80CQR6-3" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontSize=11;" target="0SZ4mY3R5xstef80CQR6-4" value="失败">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-14" edge="1" parent="1" source="0SZ4mY3R5xstef80CQR6-3" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontSize=11;" target="0SZ4mY3R5xstef80CQR6-5" value="成功">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-15" edge="1" parent="1" source="0SZ4mY3R5xstef80CQR6-4" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="0SZ4mY3R5xstef80CQR6-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-16" edge="1" parent="1" source="0SZ4mY3R5xstef80CQR6-5" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="0SZ4mY3R5xstef80CQR6-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-17" edge="1" parent="1" source="0SZ4mY3R5xstef80CQR6-6" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="0SZ4mY3R5xstef80CQR6-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-18" edge="1" parent="1" source="0SZ4mY3R5xstef80CQR6-7" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontSize=11;" target="0SZ4mY3R5xstef80CQR6-8" value="是（校区操作其他校区）">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-19" edge="1" parent="1" source="0SZ4mY3R5xstef80CQR6-7" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontSize=11;" target="0SZ4mY3R5xstef80CQR6-9" value="否">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-20" edge="1" parent="1" source="0SZ4mY3R5xstef80CQR6-8" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="0SZ4mY3R5xstef80CQR6-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0SZ4mY3R5xstef80CQR6-21" edge="1" parent="1" source="0SZ4mY3R5xstef80CQR6-9" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="0SZ4mY3R5xstef80CQR6-10">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="830" />
+              <mxPoint x="430" y="830" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

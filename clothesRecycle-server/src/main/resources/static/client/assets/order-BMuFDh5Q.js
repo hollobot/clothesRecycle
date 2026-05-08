@@ -1,1 +1,0 @@
-import{r as s}from"./request-DenwBLAa.js";const o=r=>s.post("/api/user/orders",r),t=r=>s.post(`/api/user/orders/${r}/confirm`),a=r=>s.post(`/api/user/orders/${r}/cancel`),c=r=>s.post(`/api/user/orders/${r}/complete`),p=()=>s.get("/api/user/orders");export{t as a,a as b,o as c,c as d,p as l};

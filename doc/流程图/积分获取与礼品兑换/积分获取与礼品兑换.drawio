@@ -1,0 +1,99 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="积分获取与礼品兑换" id="QRm50G9VVoWBYJJte4cv">
+    <mxGraphModel dx="1414" dy="777" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=14;fontStyle=1;" value="开始" vertex="1">
+          <mxGeometry height="44" width="120" x="360" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-2" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="选择操作类型？" vertex="1">
+          <mxGeometry height="80" width="160" x="340" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="每日签到/送出物品交易完成" vertex="1">
+          <mxGeometry height="60" width="178" x="140" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="自动发放奖励积分" vertex="1">
+          <mxGeometry height="46" width="178" x="140" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="用户选择礼品提交兑换" vertex="1">
+          <mxGeometry height="48" width="178" x="540" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-6" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="校验积分和库存？" vertex="1">
+          <mxGeometry height="80" width="160" x="549" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="兑换失败（积分不足/无库存）" vertex="1">
+          <mxGeometry height="46" width="178" x="720" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="扣减积分，生成待核销兑换码" vertex="1">
+          <mxGeometry height="60" width="178" x="418" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-9" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="线下核销/超期？" vertex="1">
+          <mxGeometry height="80" width="160" x="427" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="超期未核销，积分自动退回" vertex="1">
+          <mxGeometry height="46" width="178" x="418" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="线下核销，兑换完成" vertex="1">
+          <mxGeometry height="46" width="178" x="750" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-12" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=14;fontStyle=1;" value="结束" vertex="1">
+          <mxGeometry height="44" width="120" x="169" y="811" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-13" edge="1" parent="1" source="Yz3x4uMJU_JJbHtYuk1_-1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="Yz3x4uMJU_JJbHtYuk1_-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-14" edge="1" parent="1" source="Yz3x4uMJU_JJbHtYuk1_-2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontSize=11;" target="Yz3x4uMJU_JJbHtYuk1_-3" value="积分获取">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-15" edge="1" parent="1" source="Yz3x4uMJU_JJbHtYuk1_-2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontSize=11;" target="Yz3x4uMJU_JJbHtYuk1_-5" value="礼品兑换">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-16" edge="1" parent="1" source="Yz3x4uMJU_JJbHtYuk1_-3" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="Yz3x4uMJU_JJbHtYuk1_-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-17" edge="1" parent="1" source="Yz3x4uMJU_JJbHtYuk1_-4" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="Yz3x4uMJU_JJbHtYuk1_-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-18" edge="1" parent="1" source="Yz3x4uMJU_JJbHtYuk1_-5" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="Yz3x4uMJU_JJbHtYuk1_-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-19" edge="1" parent="1" source="Yz3x4uMJU_JJbHtYuk1_-6" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontSize=11;" target="Yz3x4uMJU_JJbHtYuk1_-7" value="不通过">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-20" edge="1" parent="1" source="Yz3x4uMJU_JJbHtYuk1_-6" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontSize=11;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="Yz3x4uMJU_JJbHtYuk1_-8" value="通过">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-22" edge="1" parent="1" source="Yz3x4uMJU_JJbHtYuk1_-8" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="Yz3x4uMJU_JJbHtYuk1_-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-24" edge="1" parent="1" source="Yz3x4uMJU_JJbHtYuk1_-9" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontSize=11;" target="Yz3x4uMJU_JJbHtYuk1_-11" value="线下核销">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-25" edge="1" parent="1" source="Yz3x4uMJU_JJbHtYuk1_-10" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" target="Yz3x4uMJU_JJbHtYuk1_-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-28" edge="1" parent="1" source="Yz3x4uMJU_JJbHtYuk1_-9" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Yz3x4uMJU_JJbHtYuk1_-10" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="520" y="770" as="sourcePoint" />
+            <mxPoint x="570" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-29" connectable="0" parent="Yz3x4uMJU_JJbHtYuk1_-28" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="超期" vertex="1">
+          <mxGeometry relative="1" x="-0.3077" y="2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Yz3x4uMJU_JJbHtYuk1_-30" edge="1" parent="1" source="Yz3x4uMJU_JJbHtYuk1_-11" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.45;entryY=1.023;entryDx=0;entryDy=0;entryPerimeter=0;" target="Yz3x4uMJU_JJbHtYuk1_-12" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="223" y="900" />
+            </Array>
+            <mxPoint x="800" y="960" as="sourcePoint" />
+            <mxPoint x="850" y="910" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
